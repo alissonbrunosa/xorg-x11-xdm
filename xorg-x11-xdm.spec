@@ -27,7 +27,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 6.99.99.0
-Release: 1
+Release: 2
 License: MIT/X11
 Group: User Interface/X
 URL: http://www.x.org
@@ -45,34 +45,28 @@ Source12: xdm-pre-audit-system.pamd
 Source13: xserver.pamd
 # This file is for RHEL4/FC5 builds, which include the new audit system
 
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 # checking TMP_XAW_LIBS... -lXaw7 -lXmu -lXt -lSM -lICE -lXext -lXpm -lX11 -ldl
-BuildRequires: xorg-x11-libXaw-devel
-BuildRequires: xorg-x11-libXmu-devel
-BuildRequires: xorg-x11-libXt-devel
-BuildRequires: xorg-x11-libSM-devel
-BuildRequires: xorg-x11-libICE-devel
-BuildRequires: xorg-x11-libXext-devel
-BuildRequires: xorg-x11-libXpm-devel
-BuildRequires: xorg-x11-libX11-devel
+BuildRequires: libXaw-devel
+BuildRequires: libXmu-devel
+BuildRequires: libXt-devel
+BuildRequires: libSM-devel
+BuildRequires: libICE-devel
+BuildRequires: libXext-devel
+BuildRequires: libXpm-devel
+BuildRequires: libX11-devel
 # FIXME: There's no autotool dep on libXdmcp currently, but it fails with the
 # following:
 # configure: error: Library requirements (xdmcp) not met; consider adjusting
 # the PKG_CONFIG_PATH environment variable if your libraries are in a
 # nonstandard prefix so pkg-config can find them.
-BuildRequires: xorg-x11-libXdmcp-devel
+BuildRequires: libXdmcp-devel
 # FIXME: There's no autotool specified dep on this currently, but everything
 # explodes looking for X11/Xauth.h without it:
-BuildRequires: xorg-x11-libXau-devel
+BuildRequires: libXau-devel
 
-# FIXME: monolithic twm packaging has a hard dep on xterm, which might still
-# be required.  We'll have to examine the twm configuration files.
-#Requires: xterm
 Provides: %{pkgname}
-# FIXME: Ask on mailing list wether this virtual provide is remotely
-# useful or not?
-#Provides: displaywmanager
 Obsoletes: XFree86-xdm
 #Conflicts: 
 
@@ -253,5 +247,9 @@ rm -rf $RPM_BUILD_ROOT
 ######################################################################
 
 %changelog
-* Wed Aug 24 2005 Mike A. Harris <mharris@redhat.com> 0.99.0-1
+* Wed Oct  5 2005 Mike A. Harris <mharris@redhat.com> 6.99.99.0-2
+- Use Fedora-Extras style BuildRoot tag
+- Update BuildRequires to use new library package names
+
+* Wed Aug 24 2005 Mike A. Harris <mharris@redhat.com> 6.99.99.0-1
 - Initial build.
