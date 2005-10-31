@@ -245,7 +245,11 @@ rm -rf $RPM_BUILD_ROOT
 ######################################################################
 
 %changelog
-* Wed Oct  5 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1.20051031.0
+* Mon Oct 31 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1.20051031.1
+- Make sure all dirs are owned that xdm creates.
+- Misc spec file cleanups
+
+* Mon Oct 31 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1.20051031.0
 - Update xdm to 0.99.2 from X11R7 RC1.
 - Update to CVS snapshot from 20051031
 - Add Epoch 1, and change package to use the xdm version number.  Later, if
