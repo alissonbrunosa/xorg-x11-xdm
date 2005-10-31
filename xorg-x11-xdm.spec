@@ -12,26 +12,17 @@
 %define build_fc4	0
 
 %define pkgname xdm
-# FIXME: Upstream tarball is 0.99.0, which would require us to add an
-# "Epoch: 1" to this package in order for rpm to upgrade from the FC4
-# (and earlier) monolithic 6.8.x rpm package.  Since it is currently
-# unknown what the final upstream tarball version is likely to be
-# called, I am avoiding adding Epoch, and instead using a 6.99.99.x
-# version number for the time being.  This allows us to make sure
-# that it will upgrade from older releases to the new release, allows
-# us to avoid adding an Epoch tag possibly unnecessarily - as Epoch
-# is permanent and very evil.  If upstream later names it "<name>-7.0",
-# then we bump the version to that, and everything just works.
-%define upstreamversion 0.99.0
 
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
-Version: 6.99.99.0
-Release: 2
+# FIXME: Remove Epoch line if package gets renamed to something like "xdm"
+Epoch: 1
+Version: 0.99.2
+Release: 1.20051031.0
 License: MIT/X11
 Group: User Interface/X
 URL: http://www.x.org
-Source0: http://xorg.freedesktop.org/X11R7.0-RC0/everything/%{pkgname}-%{upstreamversion}.tar.bz2
+Source0: %{pkgname}-%{version}-cvs20051031.tar.bz2
 #Source0: %{pkgname}-%{version}.tar.bz2
 Source10: xdm.init
 Source11: xdm.pamd
@@ -44,6 +35,7 @@ Source11: xdm.pamd
 Source12: xdm-pre-audit-system.pamd
 Source13: xserver.pamd
 # This file is for RHEL4/FC5 builds, which include the new audit system
+Patch0: xdm-0.99.2-to-20051031.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -103,16 +95,29 @@ X.Org X11 xdm - X Display Manager
 
 %prep
 %setup -q -c %{name}-%{version}
+#pushd %{pkgname}-%{version}
+#%patch0 -p2 -b .to-20051031
+#popd
 
 %build
-cd %{pkgname}-%{upstreamversion}
-%configure
-make
+cd %{pkgname}-%{version}
+%configure \
+	--disable-static \
+	--disable-xprint \
+	--with-xdmconfigdir=%{_sysconfdir}/X11/xdm \
+	--with-pixmapdir=%{_datadir}/xdm/pixmaps
+
+make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-cd %{pkgname}-%{upstreamversion}
-%makeinstall
+cd %{pkgname}-%{version}
+make install DESTDIR=$RPM_BUILD_ROOT
+
+# FIXME: Remove all libtool archives (*.la) from modules directory.  This
+# should be fixed in upstream Makefile.am or whatever.
+find $RPM_BUILD_ROOT -name '*.la' | xargs rm -f --
+
 # Install pam xdm config files
 {
    mkdir -p $RPM_BUILD_ROOT%{_sysconfigdir}/pam.d
@@ -139,16 +144,14 @@ cd %{pkgname}-%{upstreamversion}
 # FIXME: Move manpages to correct man section and rename them.  This should
 # get submitted as a bug upstream for each of the 4 components.  Hmm, the
 # manpage(s) do not actually get installed.  Fix it and report it upstream.
-# FIXME: Actually, xdm doesn't even install manpages at all by default for
-# whatever reason.  That needs to be fixed prior to FC5.
-%if 0
+%if 1
 {
    echo "FIXME: Upstream manpages install to incorrect location"
-   mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1
+   mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1x
    for manpage in xdm ; do
-      mv $RPM_BUILD_ROOT%{_mandir}/manm/$manpage. $RPM_BUILD_ROOT%{_mandir}/man1/$manpage.1
+      mv $RPM_BUILD_ROOT%{_mandir}/man1/$manpage.* $RPM_BUILD_ROOT%{_mandir}/man1x/$manpage.1x
    done
-   rmdir $RPM_BUILD_ROOT%{_mandir}/manm
+   rmdir $RPM_BUILD_ROOT%{_mandir}/man1
 }
 %endif
 # FIXME: Upstream sources do not create the system wide xdm config dir, nor
@@ -206,13 +209,30 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc
 %dir %{_bindir}
-%{_bindir}/chooser
-%{_bindir}/sessreg
+#%dir %{_libdir}/xdm
+#%{_libdir}/xdm/chooser
+#%{_bindir}/sessreg
 %{_bindir}/xdm
 %{_bindir}/xdmshell
-#%dir %{_mandir}
-#%dir %{_mandir}/man1
-#%{_mandir}/man1/xdm.1*
+%{_sysconfdir}/X11/xdm/Xaccess
+%{_sysconfdir}/X11/xdm/Xresources
+%{_sysconfdir}/X11/xdm/Xservers
+%{_sysconfdir}/X11/xdm/xdm-config
+%{_libdir}/X11/app-defaults/Chooser
+%{_libdir}/X11/xdm/GiveConsole
+%{_libdir}/X11/xdm/TakeConsole
+%{_libdir}/X11/xdm/Xreset
+%{_libdir}/X11/xdm/Xsession
+%{_libdir}/X11/xdm/Xsetup_0
+%{_libdir}/X11/xdm/Xstartup
+%{_libdir}/X11/xdm/Xwilling
+%{_libdir}/X11/xdm/chooser
+%{_libdir}/X11/xdm/libXdmGreet.so
+%dir %{_mandir}
+%dir %{_mandir}/man1x
+%{_mandir}/man1x/*.1x*
+%{_datadir}/xdm/pixmaps/xorg-bw.xpm
+%{_datadir}/xdm/pixmaps/xorg.xpm
 
 ######################################################################
 # FIXME:
@@ -247,6 +267,15 @@ rm -rf $RPM_BUILD_ROOT
 ######################################################################
 
 %changelog
+* Wed Oct  5 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1
+- Update xdm to 0.99.2 from X11R7 RC1.
+- Add Epoch 1, and change package to use the xdm version number.  Later, if
+  we decide to rename the package to "xdm", we can drop the Epoch tag.
+- Disable Xprint support
+- Use _smp_mflags
+- Add xdm-0.99.2-to-20051031.patch to pick up fixes from CVS head that allow
+  us to set the config dir and other dirs.
+
 * Wed Oct  5 2005 Mike A. Harris <mharris@redhat.com> 6.99.99.0-2
 - Use Fedora-Extras style BuildRoot tag
 - Update BuildRequires to use new library package names
