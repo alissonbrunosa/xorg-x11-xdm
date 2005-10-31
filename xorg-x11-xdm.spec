@@ -18,7 +18,7 @@ Name: xorg-x11-%{pkgname}
 # FIXME: Remove Epoch line if package gets renamed to something like "xdm"
 Epoch: 1
 Version: 0.99.2
-Release: 1.20051031.0
+Release: 1.20051031.1
 License: MIT/X11
 Group: User Interface/X
 URL: http://www.x.org
@@ -154,34 +154,6 @@ find $RPM_BUILD_ROOT -name '*.la' | xargs rm -f --
    rmdir $RPM_BUILD_ROOT%{_mandir}/man1
 }
 %endif
-# FIXME: Upstream sources do not create the system wide xdm config dir, nor
-# install the default config file currently.  We'll work around it here for now.
-#{
-#   echo "FIXME: Upstream doesn't install systemwide config by default"
-#   mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm
-#   install -m 0644 src/system.xdmrc $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/
-#}
-   # FIXME: This is just copied over from monolithic spec file, to have
-   # it in one place while making decisions, etc.  It will most likely be
-   # removed entirely for the final builds, as we will likely move these
-   # files back to the xdm package instead of keeping them in the xinitrc
-   # package.  -- mharris
-   # These are all present in our xinitrc package instead, however they
-   # should move to the "xdm" package in modularized xorg, and conflict
-   # should be set up with xinitrc packaging from older OS releases.  The
-   # xinitrc package will need updating also. (old comment)
-   %if 0
-   {
-      rm -f $RPM_BUILD_ROOT/etc/X11/xdm/GiveConsole
-      rm -f $RPM_BUILD_ROOT/etc/X11/xdm/TakeConsole
-      rm -f $RPM_BUILD_ROOT/etc/X11/xdm/Xaccess
-      rm -f $RPM_BUILD_ROOT/etc/X11/xdm/Xsession
-      rm -f $RPM_BUILD_ROOT/etc/X11/xdm/Xsetup_0
-      rm -f $RPM_BUILD_ROOT/etc/X11/xdm/Xstartup
-      rm -f $RPM_BUILD_ROOT/etc/X11/xdm/Xreset
-      rm -f $RPM_BUILD_ROOT/etc/X11/xdm/xdm-config
-   }
-   %endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -214,11 +186,15 @@ rm -rf $RPM_BUILD_ROOT
 #%{_bindir}/sessreg
 %{_bindir}/xdm
 %{_bindir}/xdmshell
+%dir %{_sysconfdir}/X11/xdm
 %{_sysconfdir}/X11/xdm/Xaccess
 %{_sysconfdir}/X11/xdm/Xresources
 %{_sysconfdir}/X11/xdm/Xservers
 %{_sysconfdir}/X11/xdm/xdm-config
+%dir %{_libdir}/X11
+%dir %{_libdir}/X11/app-defaults
 %{_libdir}/X11/app-defaults/Chooser
+%dir %{_libdir}/X11/xdm
 %{_libdir}/X11/xdm/GiveConsole
 %{_libdir}/X11/xdm/TakeConsole
 %{_libdir}/X11/xdm/Xreset
@@ -231,6 +207,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_mandir}
 %dir %{_mandir}/man1x
 %{_mandir}/man1x/*.1x*
+%dir %{_datadir}/xdm
+%dir %{_datadir}/xdm/pixmaps
 %{_datadir}/xdm/pixmaps/xorg-bw.xpm
 %{_datadir}/xdm/pixmaps/xorg.xpm
 
@@ -267,8 +245,9 @@ rm -rf $RPM_BUILD_ROOT
 ######################################################################
 
 %changelog
-* Wed Oct  5 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1
+* Wed Oct  5 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1.20051031.0
 - Update xdm to 0.99.2 from X11R7 RC1.
+- Update to CVS snapshot from 20051031
 - Add Epoch 1, and change package to use the xdm version number.  Later, if
   we decide to rename the package to "xdm", we can drop the Epoch tag.
 - Disable Xprint support
