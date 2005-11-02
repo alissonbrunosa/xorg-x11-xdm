@@ -18,7 +18,7 @@ Name: xorg-x11-%{pkgname}
 # FIXME: Remove Epoch line if package gets renamed to something like "xdm"
 Epoch: 1
 Version: 0.99.2
-Release: 1.20051031.2
+Release: 1.20051031.3
 License: MIT/X11
 Group: User Interface/X
 URL: http://www.x.org
@@ -101,6 +101,18 @@ X.Org X11 xdm - X Display Manager
 
 %build
 cd %{pkgname}-%{version}
+# FIXME: Work around pointer aliasing warnings from compiler for now
+# resource.c:213: warning: dereferencing type-punned pointer will break strict-aliasing rules
+# resource.c:215: warning: dereferencing type-punned pointer will break strict-aliasing rules
+# resource.c:219: warning: dereferencing type-punned pointer will break strict-aliasing rules
+# resource.c:223: warning: dereferencing type-punned pointer will break strict-aliasing rules
+# resource.c:227: warning: dereferencing type-punned pointer will break strict-aliasing rules
+# resource.c:229: warning: dereferencing type-punned pointer will break strict-aliasing rules
+# resource.c:235: warning: dereferencing type-punned pointer will break strict-aliasing rules
+# resource.c:242: warning: dereferencing type-punned pointer will break strict-aliasing rules
+# resource.c:251: warning: dereferencing type-punned pointer will break strict-aliasing rules
+# resource.c:253: warning: dereferencing type-punned pointer will break strict-aliasing rules
+export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 %configure \
 	--disable-static \
 	--disable-xprint \
@@ -247,6 +259,10 @@ rm -rf $RPM_BUILD_ROOT
 ######################################################################
 
 %changelog
+* Tue Nov 1 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1.20051031.3
+- Build with -fno-strict-aliasing to work around possible pointer aliasing
+  issues
+
 * Tue Nov 1 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1.20051031.2
 - It is _sysconfdir not _sysconfigdir goofball!
 - Add {_sysconfdir}/pam.d/xdm and {_sysconfdir}/pam.d/xserver files that were
