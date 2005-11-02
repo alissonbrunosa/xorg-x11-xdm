@@ -191,6 +191,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/X11/xdm/Xresources
 %{_sysconfdir}/X11/xdm/Xservers
 %{_sysconfdir}/X11/xdm/xdm-config
+%{_sysconfdir}/pam.d/xdm
+%{_sysconfdir}/pam.d/xserver
 %dir %{_libdir}/X11
 %dir %{_libdir}/X11/app-defaults
 %{_libdir}/X11/app-defaults/Chooser
@@ -247,6 +249,8 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Nov 1 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1.20051031.2
 - It is _sysconfdir not _sysconfigdir goofball!
+- Add {_sysconfdir}/pam.d/xdm and {_sysconfdir}/pam.d/xserver files that were
+  missing from file manifest.
 
 * Mon Oct 31 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1.20051031.1
 - Make sure all dirs are owned that xdm creates.
