@@ -18,7 +18,7 @@ Name: xorg-x11-%{pkgname}
 # FIXME: Remove Epoch line if package gets renamed to something like "xdm"
 Epoch: 1
 Version: 0.99.2
-Release: 1.20051031.1
+Release: 1.20051031.2
 License: MIT/X11
 Group: User Interface/X
 URL: http://www.x.org
@@ -120,17 +120,17 @@ find $RPM_BUILD_ROOT -name '*.la' | xargs rm -f --
 
 # Install pam xdm config files
 {
-   mkdir -p $RPM_BUILD_ROOT%{_sysconfigdir}/pam.d
-   install -c -m 644 %{SOURCE13} $RPM_BUILD_ROOT%{_sysconfigdir}/pam.d/xserver
+   mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/pam.d
+   install -c -m 644 %{SOURCE13} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/xserver
 # FIXME: I think the new audit system got released as an FC4 update, so
 #        we might be able to remove this conditionalization, and just
 #        use one xdm.pamd period.  In that case, FC3 and older users can
 #        manually update to FC4 or later pam, or upgrade their whole OS
 #        to something currently supported.
    if [ "%{build_fc3}" = "1" -o "%{build_fc4}" = "1" ] ; then
-      install -c -m 644 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfigdir}/pam.d/xdm
+      install -c -m 644 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/xdm
    else
-      install -c -m 644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfigdir}/pam.d/xdm
+      install -c -m 644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/xdm
    fi
 #   touch $RPM_BUILD_ROOT%{_sysconfigdir}/security/console.apps/xserver
 }
@@ -245,6 +245,9 @@ rm -rf $RPM_BUILD_ROOT
 ######################################################################
 
 %changelog
+* Tue Nov 1 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1.20051031.2
+- It is _sysconfdir not _sysconfigdir goofball!
+
 * Mon Oct 31 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1.20051031.1
 - Make sure all dirs are owned that xdm creates.
 - Misc spec file cleanups
