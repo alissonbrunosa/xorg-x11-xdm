@@ -15,14 +15,14 @@
 
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
+Version: 0.99.3
+Release: 1
 # FIXME: Remove Epoch line if package gets renamed to something like "xdm"
 Epoch: 1
-Version: 0.99.2
-Release: 1.20051031.3
 License: MIT/X11
 Group: User Interface/X
 URL: http://www.x.org
-Source0: %{pkgname}-%{version}-cvs20051031.tar.bz2
+Source0: %{pkgname}-%{version}.tar.bz2
 #Source0: %{pkgname}-%{version}.tar.bz2
 Source10: xdm.init
 Source11: xdm.pamd
@@ -94,13 +94,13 @@ Requires: pam >= 0.77-10
 X.Org X11 xdm - X Display Manager
 
 %prep
-%setup -q -c %{name}-%{version}
+%setup -q -n %{pkgname}-%{version}
 #pushd %{pkgname}-%{version}
 #%patch0 -p2 -b .to-20051031
 #popd
 
 %build
-cd %{pkgname}-%{version}
+#cd 
 # FIXME: Work around pointer aliasing warnings from compiler for now
 # resource.c:213: warning: dereferencing type-punned pointer will break strict-aliasing rules
 # resource.c:215: warning: dereferencing type-punned pointer will break strict-aliasing rules
@@ -123,7 +123,7 @@ make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-cd %{pkgname}-%{version}
+#cd %{pkgname}-%{version}
 make install DESTDIR=$RPM_BUILD_ROOT
 
 # FIXME: Remove all libtool archives (*.la) from modules directory.  This
@@ -158,7 +158,7 @@ find $RPM_BUILD_ROOT -name '*.la' | xargs rm -f --
 # manpage(s) do not actually get installed.  Fix it and report it upstream.
 %if 1
 {
-   echo "FIXME: Upstream manpages install to incorrect location"
+   echo "FIXME: Upstream RC2 manpages install to incorrect location"
    mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1x
    for manpage in xdm ; do
       mv $RPM_BUILD_ROOT%{_mandir}/man1/$manpage.* $RPM_BUILD_ROOT%{_mandir}/man1x/$manpage.1x
@@ -259,6 +259,9 @@ rm -rf $RPM_BUILD_ROOT
 ######################################################################
 
 %changelog
+* Fri Nov 11 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.3-1
+- Update xdm to 0.99.3 from X11R7 RC2.
+
 * Tue Nov 1 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1.20051031.3
 - Build with -fno-strict-aliasing to work around possible pointer aliasing
   issues
