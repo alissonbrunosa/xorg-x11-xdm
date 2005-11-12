@@ -34,8 +34,6 @@ Source11: xdm.pamd
 # it easier to test modular X on more systems for personal convenience.
 Source12: xdm-pre-audit-system.pamd
 Source13: xserver.pamd
-# This file is for RHEL4/FC5 builds, which include the new audit system
-Patch0: xdm-0.99.2-to-20051031.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -95,9 +93,6 @@ X.Org X11 xdm - X Display Manager
 
 %prep
 %setup -q -n %{pkgname}-%{version}
-#pushd %{pkgname}-%{version}
-#%patch0 -p2 -b .to-20051031
-#popd
 
 %build
 #cd 
@@ -123,7 +118,6 @@ make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-#cd %{pkgname}-%{version}
 make install DESTDIR=$RPM_BUILD_ROOT
 
 # FIXME: Remove all libtool archives (*.la) from modules directory.  This
