@@ -16,7 +16,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 0.99.3
-Release: 1
+Release: 2
 # FIXME: Remove Epoch line if package gets renamed to something like "xdm"
 Epoch: 1
 License: MIT/X11
@@ -34,6 +34,11 @@ Source11: xdm.pamd
 # it easier to test modular X on more systems for personal convenience.
 Source12: xdm-pre-audit-system.pamd
 Source13: xserver.pamd
+#Xsetup_0
+# NOTE: Change xdm-config to invoke Xwilling with "-s /bin/bash" instead
+# of "-c" to fix bug (#86505)
+Patch0: xdm-0.99.3-redhat-xdm-config-fix.patch
+
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -93,6 +98,7 @@ X.Org X11 xdm - X Display Manager
 
 %prep
 %setup -q -n %{pkgname}-%{version}
+%patch0 -p0 -b .redhat-xdm-config-fix
 
 %build
 #cd 
@@ -164,25 +170,6 @@ find $RPM_BUILD_ROOT -name '*.la' | xargs rm -f --
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre
-{
-  # FIXME:  I think we should disable this hack now, as I doubt anyone will
-  # be upgrading from Red Hat Linux 6.2 or older to Fedora Core 5 directly,
-  # and I'm not sure there is a large enough valid argument for us to support
-  # that.  I'd rather remove the mess, than support such upgrades.  I will
-  # leave it here for now however, rather than take a chance that it does
-  # matter for newer OS release upgrades. -- mharris
-  #
-  # The dir /etc/X11/xdm/authdir moved to /var/lib/xdm/authdir and was replaced
-  # by a symlink.  Upgrades from Red Hat Linux 6.x and earlier to any new
-  # release with XFree86-4.0.x fail without the following. (fixes bug #32574)
-  if [ ! -L /etc/X11/xdm/authdir -a -d /etc/X11/xdm/authdir ]; then
-    mkdir -p /var/lib/xdm && \
-    mv -f /etc/X11/xdm/authdir /var/lib/xdm/  && \
-       ln -sf ../../../var/lib/xdm/authdir /etc/X11/xdm/authdir || :
-  fi
-} &> /dev/null || :
-
 %files
 %defattr(-,root,root,-)
 %doc
@@ -193,16 +180,23 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/xdm
 %{_bindir}/xdmshell
 %dir %{_sysconfdir}/X11/xdm
+# NOTE: The Xaccess file from our "xinitrc" package had no customizations,
+# and was out of sync with upstream, so we ship the upstream one now.
 %{_sysconfdir}/X11/xdm/Xaccess
 %{_sysconfdir}/X11/xdm/Xresources
 %{_sysconfdir}/X11/xdm/Xservers
 %{_sysconfdir}/X11/xdm/xdm-config
 %{_sysconfdir}/pam.d/xdm
 %{_sysconfdir}/pam.d/xserver
+# FIXME: app-defaults files should be in /usr/share
 %dir %{_libdir}/X11
 %dir %{_libdir}/X11/app-defaults
 %{_libdir}/X11/app-defaults/Chooser
 %dir %{_libdir}/X11/xdm
+# NOTE: In Fedora Core 4 and earlier, most of these config files and scripts
+# were kept in the "xinitrc" package as forked copies, however they were
+# quite out of date, and did not contain anything useful, so we now ship the
+# upstream files and can patch them as needed to make changes.
 %{_libdir}/X11/xdm/GiveConsole
 %{_libdir}/X11/xdm/TakeConsole
 %{_libdir}/X11/xdm/Xreset
@@ -220,39 +214,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/xdm/pixmaps/xorg-bw.xpm
 %{_datadir}/xdm/pixmaps/xorg.xpm
 
-######################################################################
-# FIXME:
-# xorg-x11-6.8.99.14's file list for xdm, for developmental reference
-# None of this stuff seems to be installed by current modularized xdm
-# makefiles.  That probably indicates the upstream tarballs are broken
-# and need fixing.  Having this here for reference will help us to fix
-# the upstream tarballs and test it in rpm context.  Once it's all clean,
-# this hideous mess can dissappear.  -- mharris
-#%dir %{_sysconfdir}/X11/xdm
-#%{_sysconfdir}/X11/xdm/authdir
-#%dir %{_sysconfdir}/X11/xdm/pixmaps
-#%{_sysconfdir}/X11/xdm/pixmaps/*
-## We ship these in the xinitrc package
-##%config /etc/X11/xdm/GiveConsole
-##%config /etc/X11/xdm/TakeConsole
-##%config /etc/X11/xdm/Xaccess
-#%config /etc/X11/xdm/Xservers
-## We ship these in the xinitrc package
-##/etc/X11/xdm/Xsession
-##/etc/X11/xdm/Xsetup_0
-#%config /etc/X11/xdm/Xresources
-#%config /etc/X11/xdm/Xwilling
-## FIXME: chooser is an ELF executable, should not be in /etc really
-#/etc/X11/xdm/chooser
-#%config  %attr(0644,root,root) /etc/pam.d/xdm
-#%{_x11bindir}/xdm
-#%{_x11datadir}/X11/xdm
-#%{_x11mandir}/man1/xdm.1*
-#%dir /var/lib/xdm
-#%dir %attr(0700,root,root) /var/lib/xdm/authdir
-######################################################################
-
 %changelog
+* Sat Nov 12 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.3-2
+- Rebuild against new libXaw 0.99.2-2, which has fixed DT_SONAME.
+- Added xdm-0.99.3-redhat-xdm-config-fix.patch which merges in an
+  xdm-config fix present in the forked Red Hat xdm-config from the FC4
+  xinitrc package, which invokes Xwilling with "-s /bin/bash" instead
+  of "-c" to fix bug (#86505).
+- Removed ancient xdm rpm preinstall script, as it should be unnecessary now.
+
 * Fri Nov 11 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.3-1
 - Update xdm to 0.99.3 from X11R7 RC2.
 
