@@ -16,13 +16,14 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 0.99.3
-Release: 3
+Release: 4
 # NOTE: Remove Epoch line if package gets renamed to something like "xdm"
 Epoch: 1
 License: MIT/X11
 Group: User Interface/X
 URL: http://www.x.org
 Source0: %{pkgname}-%{version}.tar.bz2
+Source1: Xsetup_0
 Source10: xdm.init
 Source11: xdm.pamd
 # FIXME: The xdm-pre-audit-system.pamd file is for FC3/FC4 builds, where
@@ -36,6 +37,7 @@ Source13: xserver.pamd
 # NOTE: Change xdm-config to invoke Xwilling with "-s /bin/bash" instead
 # of "-c" to fix bug (#86505)
 Patch0: xdm-0.99.3-redhat-xdm-config-fix.patch
+Patch1: xdm-0.99.3-xdm-configdir.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -81,6 +83,7 @@ X.Org X11 xdm - X Display Manager
 %prep
 %setup -q -n %{pkgname}-%{version}
 %patch0 -p0 -b .redhat-xdm-config-fix
+%patch1 -p1 -b .xdmconfig
 
 %build
 #cd 
@@ -95,6 +98,7 @@ X.Org X11 xdm - X Display Manager
 # resource.c:242: warning: dereferencing type-punned pointer will break strict-aliasing rules
 # resource.c:251: warning: dereferencing type-punned pointer will break strict-aliasing rules
 # resource.c:253: warning: dereferencing type-punned pointer will break strict-aliasing rules
+
 export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 %configure \
 	--disable-static \
@@ -111,6 +115,8 @@ make install DESTDIR=$RPM_BUILD_ROOT
 # FIXME: Remove all libtool archives (*.la) from modules directory.  This
 # should be fixed in upstream Makefile.am or whatever.
 find $RPM_BUILD_ROOT -name '*.la' | xargs rm -f --
+
+install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/Xsetup_0
 
 # Install pam xdm config files
 {
@@ -168,6 +174,17 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/X11/xdm/Xresources
 %{_sysconfdir}/X11/xdm/Xservers
 %{_sysconfdir}/X11/xdm/xdm-config
+# NOTE: In Fedora Core 4 and earlier, most of these config files and scripts
+# were kept in the "xinitrc" package as forked copies, however they were
+# quite out of date, and did not contain anything useful, so we now ship the
+# upstream files and can patch them as needed to make changes.
+%{_sysconfdir}/X11/xdm/GiveConsole
+%{_sysconfdir}/X11/xdm/TakeConsole
+%{_sysconfdir}/X11/xdm/Xreset
+%{_sysconfdir}/X11/xdm/Xsession
+%{_sysconfdir}/X11/xdm/Xsetup_0
+%{_sysconfdir}/X11/xdm/Xstartup
+%{_sysconfdir}/X11/xdm/Xwilling
 %{_sysconfdir}/pam.d/xdm
 %{_sysconfdir}/pam.d/xserver
 # FIXME: app-defaults files should be in /usr/share
@@ -175,17 +192,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/X11/app-defaults
 %{_libdir}/X11/app-defaults/Chooser
 %dir %{_libdir}/X11/xdm
-# NOTE: In Fedora Core 4 and earlier, most of these config files and scripts
-# were kept in the "xinitrc" package as forked copies, however they were
-# quite out of date, and did not contain anything useful, so we now ship the
-# upstream files and can patch them as needed to make changes.
-%{_libdir}/X11/xdm/GiveConsole
-%{_libdir}/X11/xdm/TakeConsole
-%{_libdir}/X11/xdm/Xreset
-%{_libdir}/X11/xdm/Xsession
-%{_libdir}/X11/xdm/Xsetup_0
-%{_libdir}/X11/xdm/Xstartup
-%{_libdir}/X11/xdm/Xwilling
 %{_libdir}/X11/xdm/chooser
 %{_libdir}/X11/xdm/libXdmGreet.so
 %dir %{_mandir}
@@ -197,6 +203,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/xdm/pixmaps/xorg.xpm
 
 %changelog
+* Mon Nov 14 2005 Jeremy Katz <katzj@redhat.com> - 1:0.99.3-4
+- install scripts into /etc/X11/xdm instead of %%{_libdir} (#173081)
+- use our Xsetup_0 instead of xorg one (#173083) 
+
 * Sat Nov 12 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.3-3
 - Added "Obsoletes: xinitrc", as xdm now provides files that were previously
   part of that package.  xorg-x11-xinit now provides the xinitrc scripts.
