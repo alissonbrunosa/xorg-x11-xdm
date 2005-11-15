@@ -16,7 +16,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 0.99.3
-Release: 4
+Release: 5
 # NOTE: Remove Epoch line if package gets renamed to something like "xdm"
 Epoch: 1
 License: MIT/X11
@@ -62,6 +62,9 @@ BuildRequires: libXau-devel
 Provides: %{pkgname}
 Obsoletes: XFree86-xdm
 Obsoletes: xinitrc
+
+# FIXME: check if still needed for X11R7
+Requires(pre): filesystem >= 2.3.6-1
 
 # FIXME: The new audit system, required by xdm.pamd, was added to rawhide
 # in pam-0.77-10.  If it is also present in an FC4 release, this part
@@ -203,6 +206,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/xdm/pixmaps/xorg.xpm
 
 %changelog
+* Mon Nov 14 2005 Jeremy Katz <katzj@redhat.com> - 1:0.99.3-5
+- require newer filesystem package (#172610)
+
 * Mon Nov 14 2005 Jeremy Katz <katzj@redhat.com> - 1:0.99.3-4
 - install scripts into /etc/X11/xdm instead of %%{_libdir} (#173081)
 - use our Xsetup_0 instead of xorg one (#173083) 
