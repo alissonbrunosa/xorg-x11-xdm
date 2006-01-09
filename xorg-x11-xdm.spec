@@ -17,14 +17,14 @@ Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
-Version: 0.99.3
-Release: 6
+Version: 1.0.1
+Release: 1
 License: MIT/X11
 Group: User Interface/X
 URL: http://www.x.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Source0: %{pkgname}-%{version}.tar.bz2
+Source0: http://xorg.freedesktop.org/releases/X11R7.0/src/everything/%{pkgname}-%{version}.tar.bz2
 Source1: Xsetup_0
 Source10: xdm.init
 Source11: xdm.pamd
@@ -37,11 +37,9 @@ Source11: xdm.pamd
 Source12: xdm-pre-audit-system.pamd
 Source13: xserver.pamd
 
-Patch0: xdm-0.99.3-xdm-app-defaults-in-datadir.patch
-Patch1: xdm-0.99.3-xdm-scripts-in-configdir.patch
 # NOTE: Change xdm-config to invoke Xwilling with "-s /bin/bash" instead
 # of "-c" to fix bug (#86505)
-Patch10: xdm-0.99.3-redhat-xdm-config-fix.patch
+Patch10: xdm-1.0.1-redhat-xdm-config-fix.patch
 
 BuildRequires: pkgconfig
 BuildRequires: libXaw-devel
@@ -93,8 +91,6 @@ X.Org X11 xdm - X Display Manager
 
 %prep
 %setup -q -n %{pkgname}-%{version}
-%patch0 -p0 -b .xdm-app-defaults-in-datadir
-%patch1 -p0 -b .xdm-scripts-in-configdir
 %patch10 -p0 -b .redhat-xdm-config-fix
 
 %build
@@ -119,6 +115,7 @@ aclocal ; automake ; autoconf
 	--disable-static \
 	--disable-xprint \
 	--with-xdmconfigdir=%{_sysconfdir}/X11/xdm \
+	--with-xdmscriptdir=%{_sysconfdir}/X11/xdm \
 	--with-pixmapdir=%{_datadir}/xdm/pixmaps
 
 make %{?_smp_mflags}
@@ -217,6 +214,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1x/*.1x*
 
 %changelog
+* Mon Jan  9 2006 Mike A. Harris <mharris@redhat.com> 1:1.0.1-1
+- Updated xdm to version 1.0.1 from X11R7.
+- Added --with-xdmscriptdir option to ./configure to put scripts in /etc
+- Updated xdm-1.0.1-redhat-xdm-config-fix.patch to work with xdm 1.0.1
+
 * Thu Nov 24 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.3-6
 - Updated xdm.pamd to work with recent pam changes, and bumped the minimum
   pam requirement up to 0.78-0 for FC5 builds. (#170661)
