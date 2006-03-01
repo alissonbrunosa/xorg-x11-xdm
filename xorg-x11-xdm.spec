@@ -4,13 +4,6 @@
 # to be done.  The spec file will naturally become less of a mess once
 # the upstream tarball is kosher.  -- mharris
 
-# The build_xxx macros are hopefully temporary.  I plan on removing them
-# at some point in the near future anyway, when I have no personal use
-# for them anymore, which probably is soon.  If anyone else is using them,
-# I urge them to upgrade to FC5 ASAP.  ;o)
-%define build_fc3	0
-%define build_fc4	0
-
 %define pkgname xdm
 
 Summary: X.Org X11 xdm - X Display Manager
@@ -28,13 +21,6 @@ Source0: http://xorg.freedesktop.org/releases/X11R7.0/src/everything/%{pkgname}-
 Source1: Xsetup_0
 Source10: xdm.init
 Source11: xdm.pamd
-# FIXME: The xdm-pre-audit-system.pamd file is for FC3/FC4 builds, where
-# the new audit system was not included in our pam implementation yet. I
-# am not sure if FC4 has the new audit system, but if it does, this file
-# will be removed as soon as I can confirm it, and the spec file will be
-# useable only on FC4 and higher.  I leave this here for now only to make
-# it easier to test modular X on more systems for personal convenience.
-Source12: xdm-pre-audit-system.pamd
 Source13: xserver.pamd
 
 # NOTE: Change xdm-config to invoke Xwilling with "-s /bin/bash" instead
@@ -69,22 +55,11 @@ Obsoletes: xinitrc
 # real directories, and not symbolic links.
 Requires(pre): xorg-x11-filesystem >= 0.99.2-3
 
-# NOTE: Support for the new audit system was added to rawhide in pam-0.77-10,
+# NOTE: Support for the new audit system was added to rawhide in FC3/pam-0.77-10,
 # requiring a change to xdm.pamd (bug #159332). Support for pam_stack.so was
 # removed from pam, and replaced by a new mechanism in pam-0.78 and later,
 # requiring additional changes to xdm.pamd. (bug #170661)
-%if %{build_fc3}
-Requires: pam >= 0.77-10
-%else
 Requires: pam >= 0.78-0
-%endif
-
-# pam requires were added for bug #159332 for new audit system.  It really
-# should be a virtual provide in the pam package, to avoid odd version-release
-# games, but this is the way it was done so we have to live with it.
-#%if %{build_rhel4}
-#Requires: pam >= 0.77-66.8
-#%endif
 
 %description
 X.Org X11 xdm - X Display Manager
@@ -134,17 +109,7 @@ install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/Xsetup_0
 {
    mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/pam.d
    install -c -m 644 %{SOURCE13} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/xserver
-# FIXME: I think the new audit system got released as an FC4 update, so
-#        we might be able to remove this conditionalization, and just
-#        use one xdm.pamd period.  In that case, FC3 and older users can
-#        manually update to FC4 or later pam, or upgrade their whole OS
-#        to something currently supported.
-   if [ "%{build_fc3}" = "1" ] ; then
-      install -c -m 644 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/xdm
-   else
-      install -c -m 644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/xdm
-   fi
-#   touch $RPM_BUILD_ROOT%{_sysconfigdir}/security/console.apps/xserver
+   install -c -m 644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/xdm
 }
 
 # FIXME: This was in the monolithic xorg packaging, but I don't know if it
@@ -173,7 +138,6 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %doc
-%dir %{_bindir}
 %{_bindir}/xdm
 %{_bindir}/xdmshell
 %dir %{_sysconfdir}/X11/xdm
@@ -196,7 +160,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/X11/xdm/Xwilling
 %{_sysconfdir}/pam.d/xdm
 %{_sysconfdir}/pam.d/xserver
-
 %dir %{_datadir}/X11
 %dir %{_datadir}/X11/app-defaults
 %{_datadir}/X11/app-defaults/Chooser
@@ -204,20 +167,17 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/xdm/pixmaps
 %{_datadir}/xdm/pixmaps/xorg-bw.xpm
 %{_datadir}/xdm/pixmaps/xorg.xpm
-
 %dir %{_libdir}/X11/xdm
 %{_libdir}/X11/xdm/chooser
 %{_libdir}/X11/xdm/libXdmGreet.so
-
-%dir %{_mandir}
-%dir %{_mandir}/man1x
+#%dir %{_mandir}/man1x
 %{_mandir}/man1x/*.1x*
 
 %changelog
-* Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> - 1:1.0.1-1.2
+* Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> 1:1.0.1-1.2
 - bump again for double-long bug on ppc(64)
 
-* Tue Feb 07 2006 Jesse Keating <jkeating@redhat.com> - 1:1.0.1-1.1
+* Tue Feb 07 2006 Jesse Keating <jkeating@redhat.com> 1:1.0.1-1.1
 - rebuilt for new gcc4.1 snapshot and glibc changes
 
 * Mon Jan  9 2006 Mike A. Harris <mharris@redhat.com> 1:1.0.1-1
@@ -240,10 +200,10 @@ rm -rf $RPM_BUILD_ROOT
   up Makefile.in.  Fixes a typo that caused Xreset to not get installed
   properly also.
 
-* Mon Nov 14 2005 Jeremy Katz <katzj@redhat.com> - 1:0.99.3-5
+* Mon Nov 14 2005 Jeremy Katz <katzj@redhat.com> 1:0.99.3-5
 - require newer filesystem package (#172610)
 
-* Mon Nov 14 2005 Jeremy Katz <katzj@redhat.com> - 1:0.99.3-4
+* Mon Nov 14 2005 Jeremy Katz <katzj@redhat.com> 1:0.99.3-4
 - install scripts into /etc/X11/xdm instead of %%{_libdir} (#173081)
 - use our Xsetup_0 instead of xorg one (#173083) 
 
