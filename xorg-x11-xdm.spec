@@ -10,14 +10,14 @@ Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
-Version: 1.0.1
-Release: 1.2
+Version: 1.0.3
+Release: 1
 License: MIT/X11
 Group: User Interface/X
 URL: http://www.x.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Source0: http://xorg.freedesktop.org/releases/X11R7.0/src/everything/%{pkgname}-%{version}.tar.bz2
+Source0: http://xorg.freedesktop.org/releases/individual/app/%{pkgname}-%{version}.tar.bz2
 Source1: Xsetup_0
 Source10: xdm.init
 Source11: xdm.pamd
@@ -85,7 +85,7 @@ X.Org X11 xdm - X Display Manager
 export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 # NOTE: We invoke aclocal/automake/autoconf to enable the changes present in
 # xdm-0.99.3-xdm-app-defaults-in-datadir.patch & xdm-0.99.3-xdm-configdir.patch
-aclocal ; automake ; autoconf
+aclocal ; libtoolize --force ; automake ; autoconf
 %configure \
 	--disable-static \
 	--disable-xprint \
@@ -174,6 +174,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1x/*.1x*
 
 %changelog
+* Fri Mar 31 2006 Adam Jackson <ajackson@redhat.com> 1:1.0.3-1
+- Updated to version 1.0.3.  Forcibly relibtoolize to avoid present and future
+  bogons on libXdmGreet.so losing the .so extension.
+
 * Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> 1:1.0.1-1.2
 - bump again for double-long bug on ppc(64)
 
