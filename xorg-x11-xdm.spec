@@ -10,7 +10,7 @@ Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
-Version: 1.0.3
+Version: 1.0.4
 Release: 1
 License: MIT/X11
 Group: User Interface/X
@@ -174,6 +174,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1x/*.1x*
 
 %changelog
+* Thu Apr 27 2006 Adam Jackson <ajackson@redhat.com> 1:1.0.4-1
+- Updated to version 1.0.4
+
 * Fri Mar 31 2006 Adam Jackson <ajackson@redhat.com> 1:1.0.3-1
 - Updated to version 1.0.3.  Forcibly relibtoolize to avoid present and future
   bogons on libXdmGreet.so losing the .so extension.
