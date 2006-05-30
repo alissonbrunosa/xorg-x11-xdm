@@ -11,7 +11,7 @@ Name: xorg-x11-%{pkgname}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 Version: 1.0.4
-Release: 1
+Release: 2
 License: MIT/X11
 Group: User Interface/X
 URL: http://www.x.org
@@ -45,6 +45,10 @@ BuildRequires: libXdmcp-devel
 # FIXME: There's no autotool specified dep on this currently, but everything
 # explodes looking for X11/Xauth.h without it:
 BuildRequires: libXau-devel
+BuildRequires: libXinerama-devel
+BuildRequires: pam-devel
+BuildRequires: xorg-x11-util-macros
+BuildRequires: xorg-x11-xtrans-devel
 
 Provides: %{pkgname}
 Obsoletes: XFree86-xdm
@@ -174,6 +178,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1x/*.1x*
 
 %changelog
+* Tue May 30 2006 Adam Jackson <ajackson@redhat.com> 1:1.0.4-2
+- Fix BuildRequires (#191858)
+
 * Thu Apr 27 2006 Adam Jackson <ajackson@redhat.com> 1:1.0.4-1
 - Updated to version 1.0.4
 
