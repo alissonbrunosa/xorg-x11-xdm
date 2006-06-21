@@ -11,7 +11,7 @@ Name: xorg-x11-%{pkgname}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 Version: 1.0.4
-Release: 2
+Release: 3
 License: MIT/X11
 Group: User Interface/X
 URL: http://www.x.org
@@ -23,11 +23,17 @@ Source10: xdm.init
 Source11: xdm.pamd
 Source13: xserver.pamd
 
+Patch0: ftp://ftp.freedesktop.org/pub/xorg/X11R7.1/patches/xdm-1.0.4-setuid.diff
 # NOTE: Change xdm-config to invoke Xwilling with "-s /bin/bash" instead
 # of "-c" to fix bug (#86505)
 Patch10: xdm-1.0.1-redhat-xdm-config-fix.patch
 
+# FIXME: Temporary build dependencies for autotool dependence.
+BuildRequires: autoconf, automake, libtool
+
 BuildRequires: pkgconfig
+BuildRequires: xorg-x11-util-macros
+BuildRequires: xorg-x11-xtrans-devel
 BuildRequires: libXaw-devel
 BuildRequires: libXmu-devel
 BuildRequires: libXt-devel
@@ -47,10 +53,9 @@ BuildRequires: libXdmcp-devel
 BuildRequires: libXau-devel
 BuildRequires: libXinerama-devel
 BuildRequires: pam-devel
-BuildRequires: xorg-x11-util-macros
-BuildRequires: xorg-x11-xtrans-devel
 
 Provides: %{pkgname}
+
 Obsoletes: XFree86-xdm
 Obsoletes: xinitrc
 
@@ -70,22 +75,12 @@ X.Org X11 xdm - X Display Manager
 
 %prep
 %setup -q -n %{pkgname}-%{version}
+%patch0 -p0 -b .setuid
+
 %patch10 -p0 -b .redhat-xdm-config-fix
 
 %build
-#cd 
 # FIXME: Work around pointer aliasing warnings from compiler for now
-# resource.c:213: warning: dereferencing type-punned pointer will break strict-aliasing rules
-# resource.c:215: warning: dereferencing type-punned pointer will break strict-aliasing rules
-# resource.c:219: warning: dereferencing type-punned pointer will break strict-aliasing rules
-# resource.c:223: warning: dereferencing type-punned pointer will break strict-aliasing rules
-# resource.c:227: warning: dereferencing type-punned pointer will break strict-aliasing rules
-# resource.c:229: warning: dereferencing type-punned pointer will break strict-aliasing rules
-# resource.c:235: warning: dereferencing type-punned pointer will break strict-aliasing rules
-# resource.c:242: warning: dereferencing type-punned pointer will break strict-aliasing rules
-# resource.c:251: warning: dereferencing type-punned pointer will break strict-aliasing rules
-# resource.c:253: warning: dereferencing type-punned pointer will break strict-aliasing rules
-
 export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 # NOTE: We invoke aclocal/automake/autoconf to enable the changes present in
 # xdm-0.99.3-xdm-app-defaults-in-datadir.patch & xdm-0.99.3-xdm-configdir.patch
@@ -125,7 +120,7 @@ install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/Xsetup_0
 # FIXME: Move manpages to correct man section and rename them.  This should
 # get submitted as a bug upstream for each of the 4 components.  Hmm, the
 # manpage(s) do not actually get installed.  Fix it and report it upstream.
-%if 1
+%if 0
 {
    echo "FIXME: Upstream RC2 manpages install to incorrect location"
    mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1x
@@ -175,9 +170,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/X11/xdm/chooser
 %{_libdir}/X11/xdm/libXdmGreet.so
 #%dir %{_mandir}/man1x
-%{_mandir}/man1x/*.1x*
+%{_mandir}/man1/*.1*
 
 %changelog
+* Tue Jun 20 2006 Mike A. Harris <mharris@redhat.com> 1:1.0.4-3
+- Added xdm-1.0.4-setuid.diff to fix potential security issue (#196094)
+- Added temporary "BuildRequires: autoconf, automake, libtool" dependencies
+  for mock builds, for as long as we need to run autotools at compile time.
+
 * Tue May 30 2006 Adam Jackson <ajackson@redhat.com> 1:1.0.4-2
 - Fix BuildRequires (#191858)
 
