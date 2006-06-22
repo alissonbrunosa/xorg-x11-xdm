@@ -1,17 +1,11 @@
-# FIXME:  The modular xdm package still needs a fair bit of work, most
-# of which probably needs to be done in the upstream CVS.  I've made
-# numerous FIXME comments throughout to document things I think need
-# to be done.  The spec file will naturally become less of a mess once
-# the upstream tarball is kosher.  -- mharris
-
 %define pkgname xdm
 
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
+Version: 1.0.4
+Release: 4
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
-Version: 1.0.4
-Release: 3
 License: MIT/X11
 Group: User Interface/X
 URL: http://www.x.org
@@ -54,7 +48,7 @@ BuildRequires: libXau-devel
 BuildRequires: libXinerama-devel
 BuildRequires: pam-devel
 
-Provides: %{pkgname}
+Provides: xdm
 
 Obsoletes: XFree86-xdm
 Obsoletes: xinitrc
@@ -111,32 +105,12 @@ install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/Xsetup_0
    install -c -m 644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/xdm
 }
 
-# FIXME: This was in the monolithic xorg packaging, but I don't know if it
-# is still needed.  If it is, it definitely should be fixed in upstream
-# sources instead of cluttering the rpm build instructions.  <mharris>
-# Explicitly create XDM authdir
-#mkdir -m 700 -p $RPM_BUILD_ROOT/var/lib/xdm/authdir
-
-# FIXME: Move manpages to correct man section and rename them.  This should
-# get submitted as a bug upstream for each of the 4 components.  Hmm, the
-# manpage(s) do not actually get installed.  Fix it and report it upstream.
-%if 0
-{
-   echo "FIXME: Upstream RC2 manpages install to incorrect location"
-   mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1x
-   for manpage in xdm ; do
-      mv $RPM_BUILD_ROOT%{_mandir}/man1/$manpage.* $RPM_BUILD_ROOT%{_mandir}/man1x/$manpage.1x
-   done
-   rmdir $RPM_BUILD_ROOT%{_mandir}/man1
-}
-%endif
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc
+%doc AUTHORS COPYING INSTALL NEWS README ChangeLog
 %{_bindir}/xdm
 %{_bindir}/xdmshell
 %dir %{_sysconfdir}/X11/xdm
@@ -173,6 +147,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Wed Jun 21 2006 Mike A. Harris <mharris@redhat.com> 1:1.0.4-4
+- Add missing documentation to doc macro.
+- Clean cruft out of specfile.
+
 * Tue Jun 20 2006 Mike A. Harris <mharris@redhat.com> 1:1.0.4-3
 - Added xdm-1.0.4-setuid.diff to fix potential security issue (#196094)
 - Added temporary "BuildRequires: autoconf, automake, libtool" dependencies
