@@ -2,8 +2,8 @@
 
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
-Version: 1.0.4
-Release: 4
+Version: 1.0.5
+Release: 1
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT/X11
@@ -17,7 +17,6 @@ Source10: xdm.init
 Source11: xdm.pamd
 Source13: xserver.pamd
 
-Patch0: ftp://ftp.freedesktop.org/pub/xorg/X11R7.1/patches/xdm-1.0.4-setuid.diff
 # NOTE: Change xdm-config to invoke Xwilling with "-s /bin/bash" instead
 # of "-c" to fix bug (#86505)
 Patch10: xdm-1.0.1-redhat-xdm-config-fix.patch
@@ -69,7 +68,6 @@ X.Org X11 xdm - X Display Manager
 
 %prep
 %setup -q -n %{pkgname}-%{version}
-%patch0 -p0 -b .setuid
 
 %patch10 -p0 -b .redhat-xdm-config-fix
 
@@ -147,6 +145,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Wed Jun 28 2006 Mike A. Harris <mharris@redhat.com> 1:1.0.5-1
+- Updated xdm to version 1.0.5.
+- Remove xdm-1.0.4-setuid.diff as it is integrated in 1.0.5
+
 * Wed Jun 21 2006 Mike A. Harris <mharris@redhat.com> 1:1.0.4-4
 - Add missing documentation to doc macro.
 - Clean cruft out of specfile.
@@ -172,7 +174,7 @@ rm -rf $RPM_BUILD_ROOT
 * Tue Feb 07 2006 Jesse Keating <jkeating@redhat.com> 1:1.0.1-1.1
 - rebuilt for new gcc4.1 snapshot and glibc changes
 
-* Mon Jan  9 2006 Mike A. Harris <mharris@redhat.com> 1:1.0.1-1
+* Mon Jan 09 2006 Mike A. Harris <mharris@redhat.com> 1:1.0.1-1
 - Updated xdm to version 1.0.1 from X11R7.
 - Added --with-xdmscriptdir option to ./configure to put scripts in /etc
 - Updated xdm-1.0.1-redhat-xdm-config-fix.patch to work with xdm 1.0.1
@@ -214,11 +216,11 @@ rm -rf $RPM_BUILD_ROOT
 * Fri Nov 11 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.3-1
 - Update xdm to 0.99.3 from X11R7 RC2.
 
-* Tue Nov 1 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1.20051031.3
+* Tue Nov 01 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1.20051031.3
 - Build with -fno-strict-aliasing to work around possible pointer aliasing
   issues
 
-* Tue Nov 1 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1.20051031.2
+* Tue Nov 01 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.2-1.20051031.2
 - It is _sysconfdir not _sysconfigdir goofball!
 - Add {_sysconfdir}/pam.d/xdm and {_sysconfdir}/pam.d/xserver files that were
   missing from file manifest.
@@ -237,7 +239,7 @@ rm -rf $RPM_BUILD_ROOT
 - Add xdm-0.99.2-to-20051031.patch to pick up fixes from CVS head that allow
   us to set the config dir and other dirs.
 
-* Wed Oct  5 2005 Mike A. Harris <mharris@redhat.com> 6.99.99.0-2
+* Wed Oct 05 2005 Mike A. Harris <mharris@redhat.com> 6.99.99.0-2
 - Use Fedora-Extras style BuildRoot tag
 - Update BuildRequires to use new library package names
 
