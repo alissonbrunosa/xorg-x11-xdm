@@ -11,7 +11,7 @@ Group: User Interface/X
 URL: http://www.x.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Source0: http://xorg.freedesktop.org/releases/individual/app/%{pkgname}-%{version}.tar.bz2
+Source0: ftp://ftp.x.org/pub/individual/app/xdm-%{version}.tar.bz2
 Source1: Xsetup_0
 Source10: xdm.init
 Source11: xdm.pamd
