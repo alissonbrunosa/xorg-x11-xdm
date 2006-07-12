@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.0.5
-Release: 1
+Release: 1.1
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT/X11
@@ -145,6 +145,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Wed Jul 12 2006 Jesse Keating <jkeating@redhat.com> - sh: line 0: fg: no job control
+- rebuild
+
 * Wed Jun 28 2006 Mike A. Harris <mharris@redhat.com> 1:1.0.5-1
 - Updated xdm to version 1.0.5.
 - Remove xdm-1.0.4-setuid.diff as it is integrated in 1.0.5
