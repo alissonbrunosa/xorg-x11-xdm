@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.0.5
-Release: 2
+Release: 3
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT/X11
@@ -129,11 +129,16 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/X11/xdm/Xsetup_0
 %{_sysconfdir}/X11/xdm/Xstartup
 %{_sysconfdir}/X11/xdm/Xwilling
-%{_sysconfdir}/pam.d/xdm
-%{_sysconfdir}/pam.d/xserver
+# NOTE: For security, upgrades of this package will install the new pam.d
+# files and make backup copies by default.  'noreplace' is intentionally avoided
+# here.
+%config %attr(0644,root,root) %{_sysconfdir}/pam.d/xdm
+%config %attr(0644,root,root) %{_sysconfdir}/pam.d/xserver
 %dir %{_datadir}/X11
 %dir %{_datadir}/X11/app-defaults
-%{_datadir}/X11/app-defaults/Chooser
+# NOTE: We intentionally default to OS supplied file being favoured here on
+# OS upgrades.
+%config %{_datadir}/X11/app-defaults/Chooser
 %dir %{_datadir}/xdm
 %dir %{_datadir}/xdm/pixmaps
 %{_datadir}/xdm/pixmaps/xorg-bw.xpm
@@ -145,7 +150,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
-* Wed Jul 12 2006 Jesse Keating <jkeating@redhat.com> - 1:1.0.5-2
+* Mon Jul 17 2006 Mike A. Harris <mharris@redhat.com> 1:1.0.5-3
+- Added pam_keyinit.so support to xdm.pamd and xserver.pamd (#198631)
+- Flag pam.d{xdm,xserver} as attr(0644,root,root) replaceable config files.
+- Flag app-defaults/Chooser as a replaceable config file.
+
+* Wed Jul 12 2006 Jesse Keating <jkeating@redhat.com> 1:1.0.5-2
 - rebuild
 
 * Wed Jun 28 2006 Mike A. Harris <mharris@redhat.com> 1:1.0.5-1
