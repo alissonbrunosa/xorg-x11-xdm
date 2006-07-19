@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.0.5
-Release: 3%{?dist}
+Release: 4%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT/X11
@@ -135,7 +135,6 @@ rm -rf $RPM_BUILD_ROOT
 %config %attr(0644,root,root) %{_sysconfdir}/pam.d/xdm
 %config %attr(0644,root,root) %{_sysconfdir}/pam.d/xserver
 %dir %{_datadir}/X11
-%dir %{_datadir}/X11/app-defaults
 # NOTE: We intentionally default to OS supplied file being favoured here on
 # OS upgrades.
 %config %{_datadir}/X11/app-defaults/Chooser
@@ -146,10 +145,12 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/X11/xdm
 %{_libdir}/X11/xdm/chooser
 %{_libdir}/X11/xdm/libXdmGreet.so
-#%dir %{_mandir}/man1x
 %{_mandir}/man1/*.1*
 
 %changelog
+* Wed Jul 19 2006 Mike A. Harris <mharris@redhat.com> 1:1.0.5-4.fc6
+- Remove app-defaults dir from file manifest, as it is owned by libXt (#174021)
+
 * Mon Jul 17 2006 Mike A. Harris <mharris@redhat.com> 1:1.0.5-3.fc6
 - Added pam_keyinit.so support to xdm.pamd and xserver.pamd (#198631)
 - Flag pam.d{xdm,xserver} as attr(0644,root,root) replaceable config files.
