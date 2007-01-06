@@ -2,8 +2,8 @@
 
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
-Version: 1.0.5
-Release: 5%{?dist}
+Version: 1.1.3
+Release: 1%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT/X11
@@ -150,6 +150,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Fri Jan 05 2007 Adam Jackson <ajax@redhat.com> 1:1.1.3-1
+- Update to 1.1.3
+
 * Mon Jul 24 2006 Mike A. Harris <mharris@redhat.com> 1:1.0.5-5.fc6
 - Added xdm-1.0.5-sessreg-utmp-fix-bug177890.patch to restore GiveConsole to
   what we shipped in 6.8.2, and also fix bug (#177890)
