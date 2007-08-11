@@ -2,7 +2,7 @@
 
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
-Version: 1.1.3
+Version: 1.1.5
 Release: 1%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
@@ -150,6 +150,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Sat Aug 11 2007 Dave Airlie <airlied@redhat.com> 1:1.1.5-1
+- Update to 1.1.5
+
 * Fri Jan 05 2007 Adam Jackson <ajax@redhat.com> 1:1.1.3-1
 - Update to 1.1.3
 
