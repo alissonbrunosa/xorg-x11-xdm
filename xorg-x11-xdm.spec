@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.6
-Release: 1%{?dist}
+Release: 2%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT/X11
@@ -64,6 +64,9 @@ Requires(pre): xorg-x11-filesystem >= 0.99.2-3
 # requiring additional changes to xdm.pamd. (bug #170661)
 Requires: pam >= 0.78-0
 
+# We want to use the system Xsession script
+Requires: xorg-x11-xinit
+
 %description
 X.Org X11 xdm - X Display Manager
 
@@ -104,6 +107,9 @@ install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/Xsetup_0
    install -c -m 644 %{SOURCE13} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/xserver
    install -c -m 644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/xdm
 }
+
+rm -f $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/Xsession
+(cd $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm; ln -sf ../xinit/Xsession .)
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -150,6 +156,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Fri Aug 24 2007 Ray Strode <rstrode@redhat.com> 1:1.1.6-2
+- Use system Xsession script (bug 244264)
+
 * Fri Aug 17 2007 Dave Airlie <airlied@redhat.com> 1:1.1.6-1
 - Update to 1.1.6
 
