@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.6
-Release: 2%{?dist}
+Release: 3%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT/X11
@@ -156,6 +156,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Wed Feb 20 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 1:1.1.6-3
+- Autorebuild for GCC 4.3
+
 * Fri Aug 24 2007 Ray Strode <rstrode@redhat.com> 1:1.1.6-2
 - Use system Xsession script (bug 244264)
 
