@@ -3,10 +3,10 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.6
-Release: 3%{?dist}
+Release: 4%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
-License: MIT/X11
+License: MIT
 Group: User Interface/X
 URL: http://www.x.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -156,6 +156,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Tue Jul 15 2008 Adam Jackson <ajax@redhat.com> 1.1.6-4
+- Fix license tag.
+
 * Wed Feb 20 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 1:1.1.6-3
 - Autorebuild for GCC 4.3
 
