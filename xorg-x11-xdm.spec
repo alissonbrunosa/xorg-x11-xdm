@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.6
-Release: 4%{?dist}
+Release: 5%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -156,6 +156,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Thu Oct 30 2008 Soren Sandmann <ssp@redhat.com> 1.1.6-5
+- Fix xdm.pamd (bug 388431)
+
 * Tue Jul 15 2008 Adam Jackson <ajax@redhat.com> 1.1.6-4
 - Fix license tag.
 
