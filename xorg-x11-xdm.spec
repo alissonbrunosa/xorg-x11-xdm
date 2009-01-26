@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.6
-Release: 5%{?dist}
+Release: 5.0.bug388431test.1%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -21,6 +21,10 @@ Source13: xserver.pamd
 # of "-c" to fix bug (#86505)
 Patch10: xdm-1.0.1-redhat-xdm-config-fix.patch
 Patch11: xdm-1.0.5-sessreg-utmp-fix-bug177890.patch
+
+# NOTE: Change authorization to be saved in /var/lib/xdm (for
+# cooperating with SELinux, see bug 388431 for more info)
+Patch12: xdm-1.1.6-authDir-var-bug388431.patch
 
 # FIXME: Temporary build dependencies for autotool dependence.
 BuildRequires: autoconf, automake, libtool
@@ -75,6 +79,7 @@ X.Org X11 xdm - X Display Manager
 
 %patch10 -p0 -b .redhat-xdm-config-fix
 %patch11 -p0 -b .redhat-sessreg-utmp-fix-bug177890
+%patch12 -p1 -b .authDir-var-bug388431
 
 %build
 # FIXME: Work around pointer aliasing warnings from compiler for now
