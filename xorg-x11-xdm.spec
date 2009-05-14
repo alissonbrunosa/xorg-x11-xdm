@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.6
-Release: 7%{?dist}
+Release: 8%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -116,6 +116,10 @@ install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/Xsetup_0
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/Xsession
 (cd $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm; ln -sf ../xinit/Xsession .)
 
+# we need to crate /var/lib/xdm to make authorization work (bug
+# 500704)
+mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -130,7 +134,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/X11/xdm/Xaccess
 %{_sysconfdir}/X11/xdm/Xresources
 %{_sysconfdir}/X11/xdm/Xservers
-%{_sysconfdir}/X11/xdm/xdm-config
+%config %{_sysconfdir}/X11/xdm/xdm-config
 # NOTE: In Fedora Core 4 and earlier, most of these config files and scripts
 # were kept in the "xinitrc" package as forked copies, however they were
 # quite out of date, and did not contain anything useful, so we now ship the
@@ -156,11 +160,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/xdm/pixmaps/xorg-bw.xpm
 %{_datadir}/xdm/pixmaps/xorg.xpm
 %dir %{_libdir}/X11/xdm
+%dir %{_sharedstatedir}/xdm
 %{_libdir}/X11/xdm/chooser
 %{_libdir}/X11/xdm/libXdmGreet.so
 %{_mandir}/man1/*.1*
 
 %changelog
+* Thu May 14 2009 Matěj Cepl <mcepl@redhat.com> - 1:1.1.6-8
+- Create /var/lib/xdm to make authorization work (bug 500704)
+
 * Sat Mar 14 2009 Matěj Cepl <mcepl@redhat.com> - 1.1.6-7
 - Make XDM work with SELinux (fix bug 388431)
 
