@@ -131,9 +131,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_sysconfdir}/X11/xdm
 # NOTE: The Xaccess file from our "xinitrc" package had no customizations,
 # and was out of sync with upstream, so we ship the upstream one now.
-%{_sysconfdir}/X11/xdm/Xaccess
-%{_sysconfdir}/X11/xdm/Xresources
-%{_sysconfdir}/X11/xdm/Xservers
+%config %{_sysconfdir}/X11/xdm/Xaccess
+%config %{_sysconfdir}/X11/xdm/Xresources
+%config %{_sysconfdir}/X11/xdm/Xservers
 %config %{_sysconfdir}/X11/xdm/xdm-config
 # NOTE: In Fedora Core 4 and earlier, most of these config files and scripts
 # were kept in the "xinitrc" package as forked copies, however they were
@@ -141,11 +141,11 @@ rm -rf $RPM_BUILD_ROOT
 # upstream files and can patch them as needed to make changes.
 %{_sysconfdir}/X11/xdm/GiveConsole
 %{_sysconfdir}/X11/xdm/TakeConsole
-%{_sysconfdir}/X11/xdm/Xreset
+%config %{_sysconfdir}/X11/xdm/Xreset
 %{_sysconfdir}/X11/xdm/Xsession
-%{_sysconfdir}/X11/xdm/Xsetup_0
-%{_sysconfdir}/X11/xdm/Xstartup
-%{_sysconfdir}/X11/xdm/Xwilling
+%config %{_sysconfdir}/X11/xdm/Xsetup_0
+%config %{_sysconfdir}/X11/xdm/Xstartup
+%config %{_sysconfdir}/X11/xdm/Xwilling
 # NOTE: For security, upgrades of this package will install the new pam.d
 # files and make backup copies by default.  'noreplace' is intentionally avoided
 # here.
