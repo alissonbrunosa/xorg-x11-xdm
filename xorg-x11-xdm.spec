@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.6
-Release: 9%{?dist}
+Release: 10%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -25,6 +25,9 @@ Patch11: xdm-1.0.5-sessreg-utmp-fix-bug177890.patch
 # NOTE: Change authorization to be saved in /var/lib/xdm (for
 # cooperating with SELinux, see bug 388431 for more info)
 Patch12: xdm-1.1.6-authDir-var-bug388431.patch
+
+# Fix missing #endif in the Xresources (#470348)
+Patch13: xdm-1.1.6-redhat-Xresources-fix.patch
 
 # FIXME: Temporary build dependencies for autotool dependence.
 BuildRequires: autoconf, automake, libtool
@@ -80,6 +83,7 @@ X.Org X11 xdm - X Display Manager
 %patch10 -p0 -b .redhat-xdm-config-fix
 %patch11 -p0 -b .redhat-sessreg-utmp-fix-bug177890
 %patch12 -p1 -b .authDir-var-bug388431
+%patch13 -p1 -b .redhat-xresources-bug470348
 
 %build
 # FIXME: Work around pointer aliasing warnings from compiler for now
@@ -166,6 +170,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Tue Jun 23 2009 Matěj Cepl <mcepl@redhat.com> - 1:1.1.6-10
+- return lost patch for fixing bug 470348.
+
 * Thu May 14 2009 Matěj Cepl <mcepl@redhat.com> - 1:1.1.6-8
 - Create /var/lib/xdm to make authorization work (bug 500704)
 
