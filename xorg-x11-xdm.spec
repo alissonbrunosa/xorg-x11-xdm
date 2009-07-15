@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.6
-Release: 10%{?dist}
+Release: 11%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -15,7 +15,6 @@ Source0: ftp://ftp.x.org/pub/individual/app/xdm-%{version}.tar.bz2
 Source1: Xsetup_0
 Source10: xdm.init
 Source11: xdm.pamd
-Source13: xserver.pamd
 
 # NOTE: Change xdm-config to invoke Xwilling with "-s /bin/bash" instead
 # of "-c" to fix bug (#86505)
@@ -113,7 +112,6 @@ install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/Xsetup_0
 # Install pam xdm config files
 {
    mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/pam.d
-   install -c -m 644 %{SOURCE13} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/xserver
    install -c -m 644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/xdm
 }
 
@@ -139,10 +137,6 @@ rm -rf $RPM_BUILD_ROOT
 %config %{_sysconfdir}/X11/xdm/Xresources
 %config %{_sysconfdir}/X11/xdm/Xservers
 %config %{_sysconfdir}/X11/xdm/xdm-config
-# NOTE: In Fedora Core 4 and earlier, most of these config files and scripts
-# were kept in the "xinitrc" package as forked copies, however they were
-# quite out of date, and did not contain anything useful, so we now ship the
-# upstream files and can patch them as needed to make changes.
 %{_sysconfdir}/X11/xdm/GiveConsole
 %{_sysconfdir}/X11/xdm/TakeConsole
 %config %{_sysconfdir}/X11/xdm/Xreset
@@ -154,7 +148,6 @@ rm -rf $RPM_BUILD_ROOT
 # files and make backup copies by default.  'noreplace' is intentionally avoided
 # here.
 %config %attr(0644,root,root) %{_sysconfdir}/pam.d/xdm
-%config %attr(0644,root,root) %{_sysconfdir}/pam.d/xserver
 %dir %{_datadir}/X11
 # NOTE: We intentionally default to OS supplied file being favoured here on
 # OS upgrades.
@@ -170,6 +163,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Wed Jul 15 2009 Adam Jackson <ajax@redhat.com> 1.1.6-11
+- Remove xserver PAM config file, it belongs (unsurprisingly) in
+  xserver. (#500469)
+
 * Tue Jun 23 2009 Matěj Cepl <mcepl@redhat.com> - 1:1.1.6-10
 - return lost patch for fixing bug 470348.
 
