@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.6
-Release: 11%{?dist}
+Release: 12%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -85,10 +85,8 @@ X.Org X11 xdm - X Display Manager
 %patch13 -p1 -b .redhat-xresources-bug470348
 
 %build
-# FIXME: Work around pointer aliasing warnings from compiler for now
 export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
-# NOTE: We invoke aclocal/automake/autoconf to enable the changes present in
-# xdm-0.99.3-xdm-app-defaults-in-datadir.patch & xdm-0.99.3-xdm-configdir.patch
+sed -i '/XAW_/ s/)/, xaw7)/; /XAW_/ s/XAW_CHECK_XPRINT_SUPPORT/PKG_CHECK_MODULES/' configure.ac
 aclocal ; libtoolize --force ; automake ; autoconf
 %configure \
 	--disable-static \
@@ -163,6 +161,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Mon Jul 20 2009 Adam Jackson <ajax@redhat.com> 1.1.6-12
+- Fix FTBFS due to Xaw xprint build macro disappearing. (#511508)
+
 * Wed Jul 15 2009 Adam Jackson <ajax@redhat.com> 1.1.6-11
 - Remove xserver PAM config file, it belongs (unsurprisingly) in
   xserver. (#500469)
