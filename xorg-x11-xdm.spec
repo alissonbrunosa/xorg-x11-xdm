@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.6
-Release: 13%{?dist}
+Release: 14%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -58,11 +58,6 @@ Provides: xdm
 
 Obsoletes: XFree86-xdm
 Obsoletes: xinitrc
-
-# NOTE: xorg-x11-filesystem is required by all packages that put files into
-# /usr/lib/X11 or /usr/include/X11 to ensure that on OS upgrades, they are
-# real directories, and not symbolic links.
-Requires(pre): xorg-x11-filesystem >= 0.99.2-3
 
 # NOTE: Support for the new audit system was added to rawhide in FC3/pam-0.77-10,
 # requiring a change to xdm.pamd (bug #159332). Support for pam_stack.so was
@@ -161,6 +156,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Mon Aug 03 2009 Adam Jackson <ajax@redhat.com> 1.1.6-14
+- Un-Requires xorg-x11-filesystem
+
 * Mon Jul 27 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.1.6-13
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
