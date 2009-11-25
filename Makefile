@@ -1,10 +1,10 @@
 # Makefile for source rpm: xorg-x11-xdm
-# $Id: Makefile,v 1.1 2005/08/29 06:51:39 mharris Exp $
+# $Id: Makefile,v 1.2 2007/10/15 19:37:44 notting Exp $
 NAME := xorg-x11-xdm
 SPECFILE = $(firstword $(wildcard *.spec))
 
 define find-makefile-common
-for d in common ../common ../../common ; do if [ -f $$d/Makefile.common ] ; then if [ -f $$d/CVS/Root -a -w $$/Makefile.common ] ; then cd $$d ; cvs -Q update ; fi ; echo "$$d/Makefile.common" ; break ; fi ; done
+for d in common ../common ../../common ; do if [ -f $$d/Makefile.common ] ; then if [ -f $$d/CVS/Root -a -w $$d/Makefile.common ] ; then cd $$d ; cvs -Q update ; fi ; echo "$$d/Makefile.common" ; break ; fi ; done
 endef
 
 MAKEFILE_COMMON := $(shell $(find-makefile-common))
