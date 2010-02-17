@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.6
-Release: 15%{?dist}
+Release: 16%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -27,6 +27,8 @@ Patch12: xdm-1.1.6-authDir-var-bug388431.patch
 
 # Fix missing #endif in the Xresources (#470348)
 Patch13: xdm-1.1.6-redhat-Xresources-fix.patch
+
+Patch14: xdm-1.1.6-add-needed.patch
 
 # FIXME: Temporary build dependencies for autotool dependence.
 BuildRequires: autoconf, automake, libtool
@@ -80,6 +82,7 @@ X.Org X11 xdm - X Display Manager
 %patch11 -p0 -b .redhat-sessreg-utmp-fix-bug177890
 %patch12 -p1 -b .authDir-var-bug388431
 %patch13 -p1 -b .redhat-xresources-bug470348
+%patch14 -p1 -b .add-needed
 
 %build
 export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
@@ -158,6 +161,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Tue Feb 16 2010 Adam Jackson <ajax@redhat.com> 1.1.6-16
+- xdm-1.1.6-add-needed.patch: Fix FTBFS from --no-add-needed
+
 * Fri Jan 29 2010 Matěj Cepl <mcepl@redhat.com> - 1:1.1.6-15
 - Add BR libXft-devel for TrueType support (#551908)
 
