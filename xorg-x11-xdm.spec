@@ -3,13 +3,12 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.6
-Release: 16%{?dist}
+Release: 17%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
 Group: User Interface/X
 URL: http://www.x.org
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Source0: ftp://ftp.x.org/pub/individual/app/xdm-%{version}.tar.bz2
 Source1: Xsetup_0
@@ -146,7 +145,6 @@ rm -rf $RPM_BUILD_ROOT
 # files and make backup copies by default.  'noreplace' is intentionally avoided
 # here.
 %config %attr(0644,root,root) %{_sysconfdir}/pam.d/xdm
-%dir %{_datadir}/X11
 # NOTE: We intentionally default to OS supplied file being favoured here on
 # OS upgrades.
 %config %{_datadir}/X11/app-defaults/Chooser
@@ -161,6 +159,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Fri Mar 05 2010 Matěj Cepl <mcepl@redhat.com> - 1:1.1.6-17
+- Fixed bad directory ownership of /usr/share/X11
+
 * Tue Feb 16 2010 Adam Jackson <ajax@redhat.com> 1.1.6-16
 - xdm-1.1.6-add-needed.patch: Fix FTBFS from --no-add-needed
 
