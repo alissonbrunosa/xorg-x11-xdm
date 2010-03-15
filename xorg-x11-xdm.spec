@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.6
-Release: 17%{?dist}
+Release: 18%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -55,7 +55,7 @@ BuildRequires: libXau-devel
 BuildRequires: libXinerama-devel
 BuildRequires: pam-devel
 # Add TrueType support (resolves bug #551908)
-BuildRequires: libXau-devel
+BuildRequires: libXft-devel
 
 Provides: xdm
 
@@ -159,6 +159,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Sat Mar 06 2010 Stephen Beahm <stephenbeahm@comcast.net> 1:1.1.6-18
+- Fix typo introduced in rev 15 to address (#551908).
+
 * Fri Mar 05 2010 Matěj Cepl <mcepl@redhat.com> - 1:1.1.6-17
 - Fixed bad directory ownership of /usr/share/X11
 
