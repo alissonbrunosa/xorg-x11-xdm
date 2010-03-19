@@ -1,0 +1,111 @@
+--- xdm-1.1.6.orig/config.h.in	2008-10-30 15:04:40.000000000 -0400
++++ xdm-1.1.6.orig/config.h.in	2008-10-31 08:40:50.000000000 -0400
+@@ -171,6 +171,9 @@ 
+ /* Use PAM for authentication */
+ #undef USE_PAM
+ 
++/* Add linux audit support */
++#undef HAVE_LIBAUDIT
++
+ /* Define to 1 to use Xft for text on greeter screen */
+ #undef USE_XFT
+ 
+--- xdm-1.1.6.orig/configure.ac	2008-10-30 15:04:40.000000000 -0400
++++ xdm-1.1.6.orig/configure.ac	2008-10-30 17:08:19.000000000 -0400
+@@ -117,6 +117,29 @@ if test "x$USE_PAM" != "xno" ; then
+ 		 fi])
+ fi
+ 
++AC_ARG_WITH(libaudit,
++  [  --with-libaudit=[auto/yes/no]  Add Linux audit support [default=auto]],,
++  with_libaudit=auto)
++
++# Check for Linux auditing API
++#
++# libaudit detection
++if test x$with_libaudit = xno ; then
++    have_libaudit=no;
++else
++    # See if we have audit daemon library
++    AC_CHECK_LIB(audit, audit_log_user_message,
++                 have_libaudit=yes, have_libaudit=no)
++fi
++
++AM_CONDITIONAL(HAVE_LIBAUDIT, test x$have_libaudit = xyes)
++
++if test x$have_libaudit = xyes ; then
++    XDMGREET_LIBS="$XDMGREET_LIBS -laudit"
++    AC_DEFINE(HAVE_LIBAUDIT,1,[linux audit support])
++fi
++
++
+ # FIXME: Find better test for which OS'es use su -m  - for now, just try to
+ # mirror the Imakefile setting of:
+ # if  defined(OpenBSDArchitecture) || defined(NetBSDArchitecture) || defined(FreeBSDArchitecture) || defined(DarwinArchitecture)
+--- xdm-1.1.6.orig/greeter/greet.c	2008-10-30 15:04:40.000000000 -0400
++++ xdm-1.1.6.orig/greeter/greet.c	2008-10-31 09:04:03.000000000 -0400
+@@ -87,6 +87,13 @@ from The Open Group.
+ #include <syslog.h>
+ #endif
+ 
++#ifdef HAVE_LIBAUDIT
++#include <libaudit.h>
++#include <pwd.h>
++#else
++#define log_to_audit_system(l,h,s)   do { ; } while (0)
++#endif
++
+ #if defined(SECURE_RPC) && defined(sun)
+ /* Go figure, there's no getdomainname() prototype available */
+ extern int getdomainname(char *name, size_t len);
+@@ -422,6 +429,39 @@ FailedLogin (struct display *d, struct g
+ #endif
+ }
+ 
++#ifdef USE_PAM
++#ifdef HAVE_LIBAUDIT
++static void 
++log_to_audit_system(const pam_handle_t *pamhp, int success)
++{
++	struct passwd *pw;
++	char buf[64], *hostname = NULL, *tty = NULL, *login=NULL;
++	int audit_fd;
++
++	audit_fd = audit_open();
++	pam_get_item(pamhp, PAM_RHOST, &hostname);
++	pam_get_item(pamhp, PAM_TTY, &tty);
++	pam_get_item(pamhp, PAM_USER, &login);
++	if (login)
++		pw = getpwnam(login);
++	else {
++		login = "unknown";
++		pw = NULL;
++	}
++	if (pw) {
++		snprintf(buf, sizeof(buf), "uid=%d", pw->pw_uid);
++		audit_log_user_message(audit_fd, AUDIT_USER_LOGIN,
++			buf, hostname, NULL, tty, success);
++	} else {
++		snprintf(buf, sizeof(buf), "acct=%s", login);
++		audit_log_user_message(audit_fd, AUDIT_USER_LOGIN,
++			buf, hostname, NULL, tty, success);
++	}
++	close(audit_fd);
++}
++#endif
++#endif
++
+ _X_EXPORT
+ greet_user_rtn GreetUser(
+     struct display          *d,
+@@ -585,8 +625,10 @@ greet_user_rtn GreetUser(
+ 	if ((pam_error == PAM_SUCCESS) && (Verify (d, greet, verify))) {
+ 	    SetPrompt (login, 1, "Login Successful", LOGIN_TEXT_INFO, False);
+ 	    SetValue (login, 1, NULL);
++            log_to_audit_system(*pamhp, 1);
+ 	    break;
+ 	} else {
++            log_to_audit_system(*pamhp, 0);
+ 	    RUN_AND_CHECK_PAM_ERROR(pam_end,
+ 				    (*pamhp, pam_error));
+ 	    FailedLogin (d, greet);
