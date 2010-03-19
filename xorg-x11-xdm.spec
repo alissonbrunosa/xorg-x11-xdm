@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.6
-Release: 18%{?dist}
+Release: 19%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -159,6 +159,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Fri Mar 19 2010 Matěj Cepl <mcepl@redhat.com> - 1:1.1.6-19
+- Work with audit system (fixes #469357). Patch by Steve Grubb.
+
 * Sat Mar 06 2010 Stephen Beahm <stephenbeahm@comcast.net> 1:1.1.6-18
 - Fix typo introduced in rev 15 to address (#551908).
 
