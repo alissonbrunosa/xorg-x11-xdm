@@ -29,6 +29,9 @@ Patch13: xdm-1.1.6-redhat-Xresources-fix.patch
 
 Patch14: xdm-1.1.6-add-needed.patch
 
+# send a USER_LOGIN event like other login programs do. 
+Patch15: xdm-1.1.6-add-audit-event.patch
+
 # FIXME: Temporary build dependencies for autotool dependence.
 BuildRequires: autoconf, automake, libtool
 
@@ -56,6 +59,8 @@ BuildRequires: libXinerama-devel
 BuildRequires: pam-devel
 # Add TrueType support (resolves bug #551908)
 BuildRequires: libXft-devel
+# Add libaudit support
+BuildRequires: audit-libs-devel
 
 Provides: xdm
 
@@ -82,6 +87,7 @@ X.Org X11 xdm - X Display Manager
 %patch12 -p1 -b .authDir-var-bug388431
 %patch13 -p1 -b .redhat-xresources-bug470348
 %patch14 -p1 -b .add-needed
+%patch15 -p1 -b .add-audit-events
 
 %build
 export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
@@ -90,6 +96,7 @@ aclocal ; libtoolize --force ; automake ; autoconf
 %configure \
 	--disable-static \
 	--disable-xprint \
+    --with-libaudit \
 	--with-xdmconfigdir=%{_sysconfdir}/X11/xdm \
 	--with-xdmscriptdir=%{_sysconfdir}/X11/xdm \
 	--with-pixmapdir=%{_datadir}/xdm/pixmaps
