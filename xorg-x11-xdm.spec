@@ -95,7 +95,6 @@ sed -i '/XAW_/ s/)/, xaw7)/; /XAW_/ s/XAW_CHECK_XPRINT_SUPPORT/PKG_CHECK_MODULES
 aclocal ; libtoolize --force ; automake ; autoconf
 %configure \
 	--disable-static \
-	--disable-xprint \
     --with-libaudit \
 	--with-xdmconfigdir=%{_sysconfdir}/X11/xdm \
 	--with-xdmscriptdir=%{_sysconfdir}/X11/xdm \
@@ -168,6 +167,8 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Fri Mar 19 2010 Matěj Cepl <mcepl@redhat.com> - 1:1.1.6-19
 - Work with audit system (fixes #469357). Patch by Steve Grubb.
+- --disable-xprint is not needed anymore, it is disabled by
+  default
 
 * Sat Mar 06 2010 Stephen Beahm <stephenbeahm@comcast.net> 1:1.1.6-18
 - Fix typo introduced in rev 15 to address (#551908).
