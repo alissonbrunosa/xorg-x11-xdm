@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.6
-Release: 20%{?dist}
+Release: 21%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -14,6 +14,8 @@ Source0: ftp://ftp.x.org/pub/individual/app/xdm-%{version}.tar.bz2
 Source1: Xsetup_0
 Source10: xdm.init
 Source11: xdm.pamd
+
+# Following are Fedora specific patches
 
 # NOTE: Change xdm-config to invoke Xwilling with "-s /bin/bash" instead
 # of "-c" to fix bug (#86505)
@@ -62,16 +64,10 @@ BuildRequires: libXft-devel
 # Add libaudit support
 BuildRequires: audit-libs-devel
 
+# FIXME:These old provides should be removed
 Provides: xdm
 
-Obsoletes: XFree86-xdm
-Obsoletes: xinitrc
-
-# NOTE: Support for the new audit system was added to rawhide in FC3/pam-0.77-10,
-# requiring a change to xdm.pamd (bug #159332). Support for pam_stack.so was
-# removed from pam, and replaced by a new mechanism in pam-0.78 and later,
-# requiring additional changes to xdm.pamd. (bug #170661)
-Requires: pam >= 0.78-0
+Requires: pam
 
 # We want to use the system Xsession script
 Requires: xorg-x11-xinit
@@ -90,7 +86,6 @@ X.Org X11 xdm - X Display Manager
 %patch15 -p1 -b .add-audit-events
 
 %build
-export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 sed -i '/XAW_/ s/)/, xaw7)/; /XAW_/ s/XAW_CHECK_XPRINT_SUPPORT/PKG_CHECK_MODULES/' configure.ac
 aclocal ; libtoolize --force ; automake ; autoconf
 %configure \
@@ -103,19 +98,16 @@ aclocal ; libtoolize --force ; automake ; autoconf
 make %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 
-# FIXME: Remove all libtool archives (*.la) from modules directory.  This
-# should be fixed in upstream Makefile.am or whatever.
-find $RPM_BUILD_ROOT -name '*.la' | xargs rm -f --
+find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
-install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/Xsetup_0
+install -p -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/Xsetup_0
 
 # Install pam xdm config files
 {
    mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/pam.d
-   install -c -m 644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/xdm
+   install -p -m 644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/xdm
 }
 
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/Xsession
@@ -125,12 +117,9 @@ rm -f $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/Xsession
 # 500704)
 mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files
 %defattr(-,root,root,-)
-%doc AUTHORS COPYING INSTALL NEWS README ChangeLog
+%doc AUTHORS COPYING README ChangeLog
 %{_bindir}/xdm
 %{_bindir}/xdmshell
 %dir %{_sysconfdir}/X11/xdm
@@ -150,10 +139,10 @@ rm -rf $RPM_BUILD_ROOT
 # NOTE: For security, upgrades of this package will install the new pam.d
 # files and make backup copies by default.  'noreplace' is intentionally avoided
 # here.
-%config %attr(0644,root,root) %{_sysconfdir}/pam.d/xdm
+%config %{_sysconfdir}/pam.d/xdm
 # NOTE: We intentionally default to OS supplied file being favoured here on
 # OS upgrades.
-%config %{_datadir}/X11/app-defaults/Chooser
+%{_datadir}/X11/app-defaults/Chooser
 %dir %{_datadir}/xdm
 %dir %{_datadir}/xdm/pixmaps
 %{_datadir}/xdm/pixmaps/xorg-bw.xpm
@@ -165,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.1*
 
 %changelog
+* Sat Sep 25 2010 Parag Nemade <paragn AT fedoraproject.org> - 1:1.1.6-21
+- Merge-review cleanup (#226650)
+
 * Wed Mar 24 2010 Matěj Cepl <mcepl@redhat.com> - 1:1.1.6-20
 - Updated patch by sgrubb, this time tested with actual user
 
