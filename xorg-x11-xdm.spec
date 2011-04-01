@@ -2,8 +2,8 @@
 
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
-Version: 1.1.6
-Release: 22%{?dist}
+Version: 1.1.10
+Release: 1%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -22,17 +22,10 @@ Source11: xdm.pamd
 Patch10: xdm-1.0.1-redhat-xdm-config-fix.patch
 Patch11: xdm-1.0.5-sessreg-utmp-fix-bug177890.patch
 
-# NOTE: Change authorization to be saved in /var/lib/xdm (for
-# cooperating with SELinux, see bug 388431 for more info)
-Patch12: xdm-1.1.6-authDir-var-bug388431.patch
-
-# Fix missing #endif in the Xresources (#470348)
-Patch13: xdm-1.1.6-redhat-Xresources-fix.patch
-
-Patch14: xdm-1.1.6-add-needed.patch
+Patch14: xdm-1.1.10-libdl.patch
 
 # send a USER_LOGIN event like other login programs do. 
-Patch15: xdm-1.1.6-add-audit-event.patch
+Patch15: xdm-1.1.10-add-audit-event.patch
 
 # FIXME: Temporary build dependencies for autotool dependence.
 BuildRequires: autoconf, automake, libtool
@@ -80,17 +73,15 @@ X.Org X11 xdm - X Display Manager
 
 %patch10 -p0 -b .redhat-xdm-config-fix
 %patch11 -p0 -b .redhat-sessreg-utmp-fix-bug177890
-%patch12 -p1 -b .authDir-var-bug388431
-%patch13 -p1 -b .redhat-xresources-bug470348
 %patch14 -p1 -b .add-needed
 %patch15 -p1 -b .add-audit-events
 
 %build
-sed -i '/XAW_/ s/)/, xaw7)/; /XAW_/ s/XAW_CHECK_XPRINT_SUPPORT/PKG_CHECK_MODULES/' configure.ac
-aclocal ; libtoolize --force ; automake ; autoconf
+autoreconf -v --install
 %configure \
 	--disable-static \
-    --with-libaudit \
+        --with-libaudit \
+        --with-xdmlibdir=%{_libexecdir} \
 	--with-xdmconfigdir=%{_sysconfdir}/X11/xdm \
 	--with-xdmscriptdir=%{_sysconfdir}/X11/xdm \
 	--with-pixmapdir=%{_datadir}/xdm/pixmaps
@@ -147,13 +138,16 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 %dir %{_datadir}/xdm/pixmaps
 %{_datadir}/xdm/pixmaps/xorg-bw.xpm
 %{_datadir}/xdm/pixmaps/xorg.xpm
-%dir %{_libdir}/X11/xdm
 %dir %{_sharedstatedir}/xdm
-%{_libdir}/X11/xdm/chooser
-%{_libdir}/X11/xdm/libXdmGreet.so
+%{_libexecdir}/chooser
+%{_libexecdir}/libXdmGreet.so
 %{_mandir}/man1/*.1*
 
 %changelog
+* Fri Apr 01 2011 Adam Jackson <ajax@redhat.com> 1.1.10-1
+- xdm 1.1.10
+- move chooser to %%_libexecdir
+
 * Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.1.6-22
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 
