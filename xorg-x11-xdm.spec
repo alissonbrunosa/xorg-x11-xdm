@@ -2,7 +2,7 @@
 
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
-Version: 1.1.10
+Version: 1.1.11
 Release: 1%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
@@ -16,12 +16,9 @@ Source10: xdm.init
 Source11: xdm.pamd
 
 # Following are Fedora specific patches
-
-# NOTE: Change xdm-config to invoke Xwilling with "-s /bin/bash" instead
-# of "-c" to fix bug (#86505)
-Patch10: xdm-1.0.1-redhat-xdm-config-fix.patch
 Patch11: xdm-1.0.5-sessreg-utmp-fix-bug177890.patch
 
+# FIXME Most likely not needed
 Patch14: xdm-1.1.10-libdl.patch
 
 # send a USER_LOGIN event like other login programs do. 
@@ -71,9 +68,8 @@ X.Org X11 xdm - X Display Manager
 %prep
 %setup -q -n %{pkgname}-%{version}
 
-%patch10 -p0 -b .redhat-xdm-config-fix
 %patch11 -p0 -b .redhat-sessreg-utmp-fix-bug177890
-%patch14 -p1 -b .add-needed
+#%_patch14 -p1 -b .add-needed
 %patch15 -p1 -b .add-audit-events
 
 %build
@@ -144,6 +140,9 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 %{_mandir}/man1/*.1*
 
 %changelog
+* Mon Sep 26 2011 Matěj Cepl <mcepl@redhat.com> - 1.1.11-1
+- New upstream release (#741101)
+
 * Fri Apr 01 2011 Adam Jackson <ajax@redhat.com> 1.1.10-1
 - xdm 1.1.10
 - move chooser to %%_libexecdir

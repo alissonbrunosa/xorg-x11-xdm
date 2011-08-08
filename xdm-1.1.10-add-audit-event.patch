@@ -1,21 +1,21 @@
-diff -up ./config.h.in.add-audit-events ./config.h.in
---- ./config.h.in.add-audit-events	2010-04-09 22:20:26.000000000 -0400
-+++ ./config.h.in	2011-04-01 12:40:49.000000000 -0400
-@@ -196,6 +196,9 @@
+diff -up xdm-1.1.11/config.h.in.add-audit-events xdm-1.1.11/config.h.in
+--- xdm-1.1.11/config.h.in.add-audit-events	2011-09-25 09:42:16.000000000 +0200
++++ xdm-1.1.11/config.h.in	2011-09-26 17:44:21.796495208 +0200
+@@ -193,6 +193,9 @@
  /* Use PAM for authentication */
  #undef USE_PAM
  
 +/* Add linux audit support */
 +#undef HAVE_LIBAUDIT
 +
- /* Enable extensions on AIX 3, Interix.  */
- #ifndef _ALL_SOURCE
- # undef _ALL_SOURCE
-diff -up ./configure.ac.add-audit-events ./configure.ac
---- ./configure.ac.add-audit-events	2010-04-09 21:49:03.000000000 -0400
-+++ ./configure.ac	2011-04-01 12:41:22.000000000 -0400
-@@ -148,6 +148,28 @@ if test "x$USE_SELINUX" != "xno" ; then
- 	LIBS="$old_LIBS"
+ /* Use Security-Enhanced Linux (SELinux) support */
+ #undef USE_SELINUX
+ 
+diff -up xdm-1.1.11/configure.ac.add-audit-events xdm-1.1.11/configure.ac
+--- xdm-1.1.11/configure.ac.add-audit-events	2011-09-25 09:41:19.000000000 +0200
++++ xdm-1.1.11/configure.ac	2011-09-26 17:43:30.616557363 +0200
+@@ -145,6 +145,29 @@ if test "x$USE_SELINUX" != "xno" ; then
+     )
  fi
  
 +AC_ARG_WITH(libaudit,
@@ -40,12 +40,13 @@ diff -up ./configure.ac.add-audit-events ./configure.ac
 +    AC_DEFINE(HAVE_LIBAUDIT,1,[linux audit support])
 +fi
 +
- # FIXME: Find better test for which OS'es use su -m  - for now, just try to
- # mirror the Imakefile setting of:
- # if  defined(OpenBSDArchitecture) || defined(NetBSDArchitecture) || defined(FreeBSDArchitecture) || defined(DarwinArchitecture)
-diff -up ./greeter/greet.c.add-audit-events ./greeter/greet.c
---- ./greeter/greet.c.add-audit-events	2010-04-09 21:49:03.000000000 -0400
-+++ ./greeter/greet.c	2011-04-01 12:43:21.000000000 -0400
++
+ # Check whether to install systemd unit files, as suggested in daemon(7).
+ AC_ARG_WITH([systemdsystemunitdir], AS_HELP_STRING([--with-systemdsystemunitdir=DIR],
+ 	[Directory for systemd service files (default from the System and Service Manager)]),,
+diff -up xdm-1.1.11/greeter/greet.c.add-audit-events xdm-1.1.11/greeter/greet.c
+--- xdm-1.1.11/greeter/greet.c.add-audit-events	2011-09-25 09:35:47.000000000 +0200
++++ xdm-1.1.11/greeter/greet.c	2011-09-26 17:46:11.996361376 +0200
 @@ -86,6 +86,13 @@ from The Open Group.
  # endif
  #endif
@@ -60,8 +61,8 @@ diff -up ./greeter/greet.c.add-audit-events ./greeter/greet.c
  #include <string.h>
  
  #if defined(SECURE_RPC) && defined(sun)
-@@ -428,6 +435,29 @@ FailedLogin (struct display *d, struct g
- #endif
+@@ -415,6 +422,29 @@ FailedLogin (struct display *d, const ch
+     DrawFail (login);
  }
  
 +#ifdef USE_PAM
@@ -90,7 +91,7 @@ diff -up ./greeter/greet.c.add-audit-events ./greeter/greet.c
  _X_EXPORT
  greet_user_rtn GreetUser(
      struct display          *d,
-@@ -588,6 +618,7 @@ greet_user_rtn GreetUser(
+@@ -600,6 +630,7 @@ greet_user_rtn GreetUser(
  	if ((pam_error == PAM_SUCCESS) && (Verify (d, greet, verify))) {
  	    SetPrompt (login, 1, "Login Successful", LOGIN_TEXT_INFO, False);
  	    SetValue (login, 1, NULL);
@@ -98,10 +99,10 @@ diff -up ./greeter/greet.c.add-audit-events ./greeter/greet.c
  	    break;
  	} else {
  	    /* Try to fill in username for failed login error log */
-@@ -600,6 +631,7 @@ greet_user_rtn GreetUser(
- 		greet->name = username;
+@@ -611,6 +642,7 @@ greet_user_rtn GreetUser(
+ 					 (void *) &username));
  	    }
- 	    FailedLogin (d, greet);
+ 	    FailedLogin (d, username);
 +            log_to_audit_system(*pamhp, 0);
  	    RUN_AND_CHECK_PAM_ERROR(pam_end,
  				    (*pamhp, pam_error));
