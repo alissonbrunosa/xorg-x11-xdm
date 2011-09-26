@@ -53,6 +53,8 @@ BuildRequires: pam-devel
 BuildRequires: libXft-devel
 # Add libaudit support
 BuildRequires: audit-libs-devel
+# systemd support
+BuildRequires: systemd-units
 
 # FIXME:These old provides should be removed
 Provides: xdm
@@ -80,12 +82,17 @@ autoreconf -v --install
         --with-xdmlibdir=%{_libexecdir} \
 	--with-xdmconfigdir=%{_sysconfdir}/X11/xdm \
 	--with-xdmscriptdir=%{_sysconfdir}/X11/xdm \
-	--with-pixmapdir=%{_datadir}/xdm/pixmaps
+	--with-pixmapdir=%{_datadir}/xdm/pixmaps \
+	--enable-xdmshell
 
 make %{?_smp_mflags}
 
 %install
+echo looking for xdmshell
+find . -name \*xdmshell\*
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
+echo looking for xdmshell
+find $RPM_BUILD_ROOT -name \*xdmshell\*
 
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
@@ -138,10 +145,13 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 %{_libexecdir}/chooser
 %{_libexecdir}/libXdmGreet.so
 %{_mandir}/man1/*.1*
+# systemd unit file
+%{_unitdir}/xdm.service
 
 %changelog
 * Mon Sep 26 2011 Matěj Cepl <mcepl@redhat.com> - 1.1.11-1
 - New upstream release (#741101)
+- Added support for systemd
 
 * Fri Apr 01 2011 Adam Jackson <ajax@redhat.com> 1.1.10-1
 - xdm 1.1.10
