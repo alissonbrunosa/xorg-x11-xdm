@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.11
-Release: 3%{?dist}
+Release: 4%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -23,6 +23,9 @@ Patch14: xdm-1.1.10-libdl.patch
 
 # send a USER_LOGIN event like other login programs do. 
 Patch15: xdm-1.1.10-add-audit-event.patch
+
+# systemd unit file update
+Patch16: xdm-service.patch
 
 # FIXME: Temporary build dependencies for autotool dependence.
 BuildRequires: autoconf, automake, libtool
@@ -54,7 +57,10 @@ BuildRequires: libXft-devel
 # Add libaudit support
 BuildRequires: audit-libs-devel
 # systemd support
-BuildRequires: systemd-units
+BuildRequires: systemd
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
 
 # FIXME:These old provides should be removed
 Provides: xdm
@@ -73,6 +79,7 @@ X.Org X11 xdm - X Display Manager
 %patch11 -p0 -b .redhat-sessreg-utmp-fix-bug177890
 #%_patch14 -p1 -b .add-needed
 %patch15 -p1 -b .add-audit-events
+%patch16 -p1 -b .systemd
 
 %build
 autoreconf -v --install
@@ -110,6 +117,15 @@ rm -f $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/Xsession
 # we need to crate /var/lib/xdm to make authorization work (bug
 # 500704)
 mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
+
+%post
+%systemd_post xdm.service
+
+%preun
+%systemd_preun xdm.service
+
+%postun
+%systemd_postun
 
 %files
 %defattr(-,root,root,-)
@@ -149,6 +165,11 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 %{_unitdir}/xdm.service
 
 %changelog
+* Tue Aug  7 2012 Lennart Poettering <lpoetter@redhat.com> - 1:1.1.11-4
+- Display Manager Rework
+- https://fedoraproject.org/wiki/Features/DisplayManagerRework
+- https://bugzilla.redhat.com/show_bug.cgi?id=846143
+
 * Sun Jul 22 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.1.11-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
