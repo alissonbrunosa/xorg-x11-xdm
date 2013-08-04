@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.11
-Release: 5%{?dist}
+Release: 6%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -165,6 +165,9 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 %{_unitdir}/xdm.service
 
 %changelog
+* Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.1.11-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
 * Fri Feb 15 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.1.11-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
