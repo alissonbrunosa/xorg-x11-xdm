@@ -1,4 +1,4 @@
-%define pkgname xdm
+%global pkgname xdm
 
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
@@ -165,6 +165,9 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 %{_unitdir}/xdm.service
 
 %changelog
+* Wed Jan 20 2016 Peter Hutterer <peter.hutterer@redhat.com>
+- s/define/global/
+
 * Fri Jun 19 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.1.11-9
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
