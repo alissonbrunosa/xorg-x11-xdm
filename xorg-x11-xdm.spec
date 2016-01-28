@@ -128,7 +128,6 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 %systemd_postun
 
 %files
-%defattr(-,root,root,-)
 %doc AUTHORS COPYING README ChangeLog
 %{_bindir}/xdm
 %{_bindir}/xdmshell
@@ -165,6 +164,9 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 %{_unitdir}/xdm.service
 
 %changelog
+* Thu Jan 28 2016 Peter Hutterer <peter.hutterer@redhat.com>
+- Remove unnecessary defattr
+
 * Wed Jan 20 2016 Peter Hutterer <peter.hutterer@redhat.com>
 - s/define/global/
 
