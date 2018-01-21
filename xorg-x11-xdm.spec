@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.11
-Release: 14%{?dist}
+Release: 15%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -21,11 +21,14 @@ Patch11: xdm-1.0.5-sessreg-utmp-fix-bug177890.patch
 # FIXME Most likely not needed
 Patch14: xdm-1.1.10-libdl.patch
 
-# send a USER_LOGIN event like other login programs do. 
+# send a USER_LOGIN event like other login programs do.
 Patch15: xdm-1.1.10-add-audit-event.patch
 
 # systemd unit file update
 Patch16: xdm-service.patch
+
+# Include <crypt.h> if needed.
+Patch17: xdm-1.1.11-include_crypt_h.patch
 
 # FIXME: Temporary build dependencies for autotool dependence.
 BuildRequires: autoconf, automake, libtool
@@ -80,6 +83,7 @@ X.Org X11 xdm - X Display Manager
 #%_patch14 -p1 -b .add-needed
 %patch15 -p1 -b .add-audit-events
 %patch16 -p1 -b .systemd
+%patch17 -p1 -b .crypt_h
 
 %build
 autoreconf -v --install
@@ -164,6 +168,9 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 %{_unitdir}/xdm.service
 
 %changelog
+* Sun Jan 21 2018 Björn Esser <besser82@fedoraproject.org> - 1:1.1.11-15
+- Add patch to include <crypt.h> if needed
+
 * Sat Jan 20 2018 Björn Esser <besser82@fedoraproject.org> - 1:1.1.11-14
 - Rebuilt for switch to libxcrypt
 

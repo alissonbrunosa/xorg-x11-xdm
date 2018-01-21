@@ -1,0 +1,14 @@
+Index: xdm-1.1.11/xdm/session.c
+===================================================================
+--- xdm-1.1.11.orig/xdm/session.c
++++ xdm-1.1.11/xdm/session.c
+@@ -140,6 +140,9 @@ extern	void	endspent(void);
+ #if defined(CSRG_BASED) || defined(__GLIBC__) || defined(__UNIXWARE__) || defined(__SCO__)
+ # include <pwd.h>
+ # include <unistd.h>
++# if defined(__GLIBC__) && !defined(_XOPEN_CRYPT)
++# include <crypt.h>
++# endif
+ #else
+ extern	struct passwd	*getpwnam(GETPWNAM_ARGS);
+ # ifdef linux
