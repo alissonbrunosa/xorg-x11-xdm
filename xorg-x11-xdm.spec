@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.11
-Release: 17%{?dist}
+Release: 18%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -168,6 +168,9 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 %{_unitdir}/xdm.service
 
 %changelog
+* Mon Jan 14 2019 Björn Esser <besser82@fedoraproject.org> - 1:1.1.11-18
+- Rebuilt for libcrypt.so.2 (#1666033)
+
 * Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1:1.1.11-17
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
