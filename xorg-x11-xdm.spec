@@ -7,7 +7,6 @@ Release: 18%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
-Group: User Interface/X
 URL: http://www.x.org
 
 Source0: ftp://ftp.x.org/pub/individual/app/xdm-%{version}.tar.bz2
