@@ -59,7 +59,7 @@ BuildRequires: libXft-devel
 # Add libaudit support
 BuildRequires: audit-libs-devel
 # systemd support
-BuildRequires: systemd
+BuildRequires: systemd-rpm-macros systemd
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
@@ -128,7 +128,7 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 %systemd_preun xdm.service
 
 %postun
-%systemd_postun
+%systemd_postun xdm.service
 
 %files
 %doc AUTHORS COPYING README ChangeLog
@@ -167,7 +167,7 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 %{_unitdir}/xdm.service
 
 %changelog
-* Fri Jan 31 2020 Fedora Release Engineering <releng@fedoraproject.org>
+* Fri Jan 31 2020 Fedora Release Engineering <releng@fedoraproject.org> 1:1.1.11-22
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
 * Sat Jul 27 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1:1.1.11-21
