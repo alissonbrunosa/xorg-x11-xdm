@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.11
-Release: 23%{?dist}
+Release: 24%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -30,6 +30,7 @@ Patch16: xdm-service.patch
 Patch17: xdm-1.1.11-include_crypt_h.patch
 
 # FIXME: Temporary build dependencies for autotool dependence.
+BuildRequires: make
 BuildRequires: autoconf, automake, libtool
 
 BuildRequires: pkgconfig
@@ -167,6 +168,9 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 %{_unitdir}/xdm.service
 
 %changelog
+* Thu Nov  5 11:00:40 AEST 2020 Peter Hutterer <peter.hutterer@redhat.com> - 1:1.1.11-24
+- Add BuildRequires for make
+
 * Wed Jul 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1:1.1.11-23
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
 
