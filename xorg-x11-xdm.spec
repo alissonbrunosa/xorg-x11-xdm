@@ -3,7 +3,7 @@
 Summary: X.Org X11 xdm - X Display Manager
 Name: xorg-x11-%{pkgname}
 Version: 1.1.11
-Release: 25%{?dist}
+Release: 26%{?dist}
 # NOTE: Remove Epoch line if/when the package ever gets renamed.
 Epoch: 1
 License: MIT
@@ -72,6 +72,7 @@ Requires: pam
 
 # We want to use the system Xsession script
 Requires: xorg-x11-xinit
+Requires: sessreg
 
 %description
 X.Org X11 xdm - X Display Manager
@@ -168,6 +169,9 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 %{_unitdir}/xdm.service
 
 %changelog
+* Wed Apr 28 2021 Peter Hutterer <peter.hutterer@redhat.com> 1:1.1.11-26
+- Add Requires for sessreg, our patched GiveConsole needs it
+
 * Thu Jan 28 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1:1.1.11-25
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
@@ -398,7 +402,7 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 
 * Mon Nov 14 2005 Jeremy Katz <katzj@redhat.com> 1:0.99.3-4
 - install scripts into /etc/X11/xdm instead of %%{_libdir} (#173081)
-- use our Xsetup_0 instead of xorg one (#173083) 
+- use our Xsetup_0 instead of xorg one (#173083)
 
 * Sat Nov 12 2005 Mike A. Harris <mharris@redhat.com> 1:0.99.3-3
 - Added "Obsoletes: xinitrc", as xdm now provides files that were previously
