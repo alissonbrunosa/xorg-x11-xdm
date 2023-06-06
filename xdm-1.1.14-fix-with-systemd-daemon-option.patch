@@ -1,0 +1,25 @@
+diff --git a/configure.ac b/configure.ac
+index 9471684..8566fca 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -194,16 +194,17 @@ AM_CONDITIONAL(HAVE_SYSTEMD, [test "x$with_systemdsystemunitdir" != "xno"])
+ # This requires libsystemd.
+ AC_ARG_WITH([systemd-daemon], AS_HELP_STRING([--with-systemd-daemon],
+ 	[Add support for systemd startup notification (default is autodetected)]),
+-	[USE_SYSTEMD_DAEMON=$withval], [USE_SYSTEMD_DAEMON=auto])
++	[USE_SYSTEMD_DAEMON=$withval],
++        PKG_CHECK_EXISTS(libsystemd, [USE_SYSTEMD_DAEMON="yes"], [USE_SYSTEMD_DAEMON="no"]))
+ AS_IF([test "x$USE_SYSTEMD_DAEMON" != "xno"], [
+     PKG_CHECK_MODULES([SYSTEMD_DAEMON], [libsystemd],
+-	[AC_DEFINE(USE_SYSTEMD_DAEMON,1,[Use systemd startup notification])],
++	[AC_DEFINE(USE_SYSTEMD_DAEMON,1 ,[Use systemd startup notification])],
+ 	[AS_IF([test "x$USE_SYSTEMD_DAEMON" = "xyes"],
+ 	    [AC_MSG_ERROR([systemd startup notification support requested, but libsystemd not found.])]
+ 	)]
+     )
+ ])
+-AM_CONDITIONAL(USE_SYSTEMD_DAEMON, [test "x$USE_SYSTEMD_DAEMON" != "xno"])
++AM_CONDITIONAL(USE_SYSTEMD_DAEMON, [test "x$USE_SYSTEMD_DAEMON" = "xyes"])
+ 
+ # FIXME: Find better test for which OS'es use su -m  - for now, just try to
+ # mirror the Imakefile setting of:
