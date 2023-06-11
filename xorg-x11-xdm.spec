@@ -193,7 +193,7 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 * Thu Jan 28 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1:1.1.11-25
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
-* Thu Nov  5 11:00:40 AEST 2020 Peter Hutterer <peter.hutterer@redhat.com> - 1:1.1.11-24
+* Thu Nov 05 2020 Peter Hutterer <peter.hutterer@redhat.com> - 1:1.1.11-24
 - Add BuildRequires for make
 
 * Wed Jul 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1:1.1.11-23
