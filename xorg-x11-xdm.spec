@@ -176,10 +176,9 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 - Update to version 1.1.14
 - Remove unnecessary patches for crypt.h and libdl
 - Add support to systemd notify
-- New patch for verson 1.1.14 for audit and systemd unit file
+- New patch for version 1.1.14 for audit and systemd unit file
 - Add patch to fix build when auto-identifying the libsystemd
 - Add patch to set -nolisten tcp
-- Fix --with-systemd-daemon option.
 
 * Sat Jan 22 2022 Fedora Release Engineering <releng@fedoraproject.org> - 1:1.1.11-28
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
