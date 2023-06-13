@@ -67,8 +67,7 @@ Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
 
-# FIXME:These old provides should be removed
-Provides: xdm
+Provides: xdm = %{version}-%{release}
 
 Requires: pam
 
@@ -121,7 +120,7 @@ install -p -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/Xsetup_0
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm/Xsession
 (cd $RPM_BUILD_ROOT%{_sysconfdir}/X11/xdm; ln -sf ../xinit/Xsession .)
 
-# we need to crate /var/lib/xdm to make authorization work (bug
+# we need to create /var/lib/xdm to make authorization work (bug
 # 500704)
 mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 
@@ -135,27 +134,34 @@ mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/xdm
 %systemd_postun xdm.service
 
 %files
-%doc AUTHORS COPYING ChangeLog
+%license COPYING
+%doc AUTHORS ChangeLog
 %{_bindir}/xdm
 %{_bindir}/xdmshell
 %dir %{_sysconfdir}/X11/xdm
+
 # NOTE: The Xaccess file from our "xinitrc" package had no customizations,
 # and was out of sync with upstream, so we ship the upstream one now.
-%config %{_sysconfdir}/X11/xdm/Xaccess
-%config %{_sysconfdir}/X11/xdm/Xresources
-%config %{_sysconfdir}/X11/xdm/Xservers
-%config %{_sysconfdir}/X11/xdm/xdm-config
+%config(noreplace) %{_sysconfdir}/X11/xdm/Xaccess
+%config(noreplace) %{_sysconfdir}/X11/xdm/Xresources
+%config(noreplace) %{_sysconfdir}/X11/xdm/Xservers
+%config(noreplace) %{_sysconfdir}/X11/xdm/xdm-config
+%config(noreplace) %{_sysconfdir}/X11/xdm/Xsession
+
+%{_sysconfdir}/X11/xdm/Xreset
+%{_sysconfdir}/X11/xdm/Xsetup_0
+%{_sysconfdir}/X11/xdm/Xstartup
+%{_sysconfdir}/X11/xdm/Xwilling
+
 %{_sysconfdir}/X11/xdm/GiveConsole
 %{_sysconfdir}/X11/xdm/TakeConsole
-%config %{_sysconfdir}/X11/xdm/Xreset
-%{_sysconfdir}/X11/xdm/Xsession
-%config %{_sysconfdir}/X11/xdm/Xsetup_0
-%config %{_sysconfdir}/X11/xdm/Xstartup
-%config %{_sysconfdir}/X11/xdm/Xwilling
+
+
 # NOTE: For security, upgrades of this package will install the new pam.d
 # files and make backup copies by default.  'noreplace' is intentionally avoided
 # here.
-%config %{_sysconfdir}/pam.d/xdm
+%config(noreplace) %{_sysconfdir}/pam.d/xdm
+
 # NOTE: We intentionally default to OS supplied file being favoured here on
 # OS upgrades.
 %{_datadir}/X11/app-defaults/Chooser
